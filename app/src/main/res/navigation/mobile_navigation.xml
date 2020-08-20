@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_HomeFragment_to_Prompt1Fragment"
+            app:destination="@id/nav_add_report" />
+        <action
+            android:id="@+id/action_nav_home_to_adminFragment"
+            app:destination="@id/adminFragment"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+
+    <navigation
+        android:id="@+id/nav_add_report"
+        app:startDestination="@id/nav_prompt1" >
+        <fragment
+            android:id="@+id/nav_prompt1"
+            android:name="org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment1"
+            android:label="@string/prompt1"
+            tools:layout="@layout/fragment_prompt1">
+            <action
+                android:id="@+id/action_Prompt1Fragment_to_SuccessFragment"
+                app:destination="@id/nav_slideshow" />
+
+            <argument
+                android:name="myArg"
+                app:argType="string" />
+        </fragment>
+        <fragment
+            android:id="@+id/nav_slideshow"
+            android:name="org.communitycookerfoundation.communitycookerfoundation.ui.success.SuccessFragment"
+            android:label="@string/menu_slideshow"
+            tools:layout="@layout/fragment_success">
+            <action
+                android:id="@+id/action_SuccessFragment_to_HomeFragment"
+                app:destination="@id/nav_home"
+                app:popUpTo="@id/nav_home"
+                app:popUpToInclusive="true" />
+        </fragment>
+    </navigation>
+    <fragment
+        android:id="@+id/adminFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.AdminFragment"
+        android:label="admin_fragment"
+        tools:layout="@layout/admin_fragment" >
+        <action
+            android:id="@+id/action_adminFragment_to_manageReportsFragment"
+            app:destination="@id/manageReportsFragment" />
+        <action
+            android:id="@+id/action_adminFragment_to_manageUsersFragment"
+            app:destination="@id/manageUsersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/userAccount"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.UserAccount"
+        android:label="user_account_fragment"
+        tools:layout="@layout/user_fragment" >
+        <argument
+            android:name="userPosition"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_userAccount_to_manageReportsFragment"
+            app:destination="@id/manageReportsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageReportsFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageReportsFragment"
+        android:label="ManageReportsFragment" >
+        <action
+            android:id="@+id/action_manageReportsFragment_to_userAccount"
+            app:destination="@id/userAccount" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageUsersFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageUsersFragment"
+        android:label="ManageUsersFragment" />
+</navigation>

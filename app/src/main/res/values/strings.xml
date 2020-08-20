@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">CCF</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+
+    <string name="home_second">Home Second</string>
+    <string name="successText">You have successfully added a report!</string>
+    <string name="successButText">Next</string>
+    <string name="sign_in_cancelled">you\'ve just cancelled!</string>
+    <string name="no_internet_connection">Check Internet Connection!</string>
+    <string name="account_disabled">Your Account is Deactivated!</string>
+    <string name="unknown_error">Try Again</string>
+    <string name="action_sign_out">Sign Out</string>
+    <string name="sign_out_failure">Try again later!</string>
+    <string name="currentPromptPlaceholder">1/9</string>
+    <string name="promptText1">"How many liters of water have you used today? "</string>
+    <string name="add_report">Add a Report</string>
+    <string name="toast_empty_string">Please add a value!</string>
+    <string name="prompt1">Prompt1</string>
+    <string name="welcome_message">Hello</string>
+    <string name="refresh_reports">Refresh</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="add_user_res">Add a User</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_cooker_dial">Add</string>
+    <string name="add_email">Enter Email Address</string>
+    <string name="add_user_name">Enter Site Name</string>
+</resources>

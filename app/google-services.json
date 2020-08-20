@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "654143441592",
+    "firebase_url": "https://communitycookerapp.firebaseio.com",
+    "project_id": "communitycookerapp",
+    "storage_bucket": "communitycookerapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654143441592:android:d77fba10e67e932d2ac24d",
+        "android_client_info": {
+          "package_name": "org.communitycookerfoundation.communitycookerfoundation"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654143441592-v4gqk56kft2je3hjgbcq96t6bj89ec8d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB1ImrvLpZdTOX8mNJF2jh7J2cAz7jv0rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "654143441592-v4gqk56kft2je3hjgbcq96t6bj89ec8d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

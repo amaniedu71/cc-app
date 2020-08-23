@@ -104,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sign_out:
                 signOut();
                 return true;
+            case R.id.action_delete:
+                deleteAccount();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
@@ -118,6 +121,25 @@ public class MainActivity extends AppCompatActivity {
                     startSignedOutActivity();
                 else {
                     Log.w(TAG, "signOut:failure", task.getException());
+                    showToast(R.string.sign_out_failure);
+
+                }
+
+            }
+        });
+
+    }
+
+    private void deleteAccount() {
+        AuthUI.getInstance().delete(this).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isComplete()) {
+                    startSignedOutActivity();
+                    Log.d(TAG, "successfully deleted account");
+                }
+                else {
+                    Log.w(TAG, "delete account failure", task.getException());
                     showToast(R.string.sign_out_failure);
 
                 }

@@ -373,11 +373,11 @@ public class DataRepo {
     }
     //TODO: REFACTOR THIS METHOD COMPLETELY!
     public void addUser(Map<String, String> cookerUser) {
-        Map<String, Object> user = new HashMap<>();
-        user.put("allowed_users", Arrays.asList(cookerUser.get("user_email")));
+        Map<String, Object> parentData = new HashMap<>();
+        parentData.put("roles", cookerUser);
         // Add a new document with a generated ID
         mFirebaseDB.collection("private_data").document("access_list")
-                .set(user, SetOptions.merge())
+                .set(parentData, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

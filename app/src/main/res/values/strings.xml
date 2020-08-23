@@ -35,4 +35,5 @@
     <string name="add_cooker_dial">Add</string>
     <string name="add_email">Enter Email Address</string>
     <string name="add_user_name">Enter Site Name</string>
+    <string name="action_delete_user">Delete Account</string>
 </resources>

@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull  View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
 
@@ -59,7 +59,7 @@ public class HomeFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recycler_report1);
         mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
 
-        mViewModel.isAdmin().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mViewModel.getIsAdmin().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isAdmin) {
                 if (isAdmin) {
@@ -69,12 +69,24 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        mViewModel.getIsAuthdUser().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
+            @Override
+            public void onChanged(Boolean isAuthdUser) {
+                if(isAuthdUser){
+                }
+                
 
-        mAddButton = view.findViewById(R.id.add_button);
-        mReportAdapter = new UserReportAdapter(getContext());
+            }
+        });
+
+
         mRecyclerView.setAdapter(mReportAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setNestedScrollingEnabled(false);
+
+        mAddButton = view.findViewById(R.id.add_button);
+        mReportAdapter = new UserReportAdapter(getContext());
+
         mViewModel.getAllReports().observe(getViewLifecycleOwner(), new Observer<List<ReportEntity>>() {
             @Override
             public void onChanged(List<ReportEntity> reportEntities) {
@@ -108,8 +120,21 @@ public class HomeFragment extends Fragment {
 
 
         mWelcomeMessage = view.findViewById(R.id.welcomeText);
-        String welcome = getString(R.string.welcome_message) + mViewModel.getDisplayName();
+        String welcome = getString(R.string.welcome_message) +" "+ mViewModel.getDisplayName();
         mWelcomeMessage.setText(welcome);
+
+    }
+
+
+    private void showMainUI(View view){
+        view.setVisibility(View.VISIBLE);
+
+        showReports();
+
+
+    }
+    private void showReports(){
+
 
     }
 }

@@ -37,6 +37,7 @@ public class HomeFragment extends Fragment {
     private int count;
     private TextView mWelcomeMessage;
 
+
     public HomeFragment() {
         // Required empty public constructor
 
@@ -68,18 +69,20 @@ public class HomeFragment extends Fragment {
 
             }
         });
-
         mViewModel.getIsAuthdUser().observe(getViewLifecycleOwner(), new Observer<Boolean>(){
             @Override
             public void onChanged(Boolean isAuthdUser) {
                 if(isAuthdUser){
+                    View root = HomeFragment.this.getView();
+                    if(root != null) root.setVisibility(View.VISIBLE);
+
                 }
-                
+
 
             }
         });
 
-
+        view.setVisibility(View.INVISIBLE);
         mRecyclerView.setAdapter(mReportAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setNestedScrollingEnabled(false);

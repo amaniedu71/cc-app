@@ -11,13 +11,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.adapters.ReportAdapter;
+import org.communitycookerfoundation.communitycookerfoundation.adapters.AdminReportAdapter;
 
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class UserAccount extends Fragment {
     public final static String TAG = "UserAccount";
     private UserAccountViewModel mViewModel;
     private String mCurrentUserUID;
-    private ReportAdapter mReportAdapter;
+    private AdminReportAdapter mAdminReportAdapter;
     private RecyclerView mRecycler;
 
     public static UserAccount newInstance() {
@@ -45,14 +44,14 @@ public class UserAccount extends Fragment {
         mViewModel =  new ViewModelProvider(this).get(UserAccountViewModel.class);
         mCurrentUserUID = UserAccountArgs.fromBundle(getArguments()).getUserPosition();
         mRecycler = view.findViewById(R.id.userRecycler);
-        mReportAdapter = new ReportAdapter(getContext());
+        mAdminReportAdapter = new AdminReportAdapter(getContext());
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecycler.setAdapter(mReportAdapter);
+        mRecycler.setAdapter(mAdminReportAdapter);
         mViewModel.getUserReports(mCurrentUserUID).observe(this.getViewLifecycleOwner(), new Observer<List<Map<String, Object>>>() {
             @Override
             public void onChanged(List<Map<String, Object>> reports) {
                 if(reports.size()>0){
-                    mReportAdapter.setReports(reports);
+                    mAdminReportAdapter.setReports(reports);
                     /*
                     for(Map<String, Object> tempMap: reports){
                         for(String keys:tempMap.keySet()){

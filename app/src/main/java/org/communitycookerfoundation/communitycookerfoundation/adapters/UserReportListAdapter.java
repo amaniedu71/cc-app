@@ -15,11 +15,11 @@ import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportE
 import java.util.List;
 
 
-public class UserReportAdapter extends RecyclerView.Adapter<UserReportAdapter.ReportViewHolder> {
+public class UserReportListAdapter extends RecyclerView.Adapter<UserReportListAdapter.ReportViewHolder> {
 
     private List<ReportEntity> mReports; //cached copy
 
-    public UserReportAdapter(Context context){
+    public UserReportListAdapter(Context context){
 
 
     }

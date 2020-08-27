@@ -24,12 +24,12 @@
 
     <navigation
         android:id="@+id/nav_add_report"
-        app:startDestination="@id/nav_prompt1" >
+        app:startDestination="@id/nav_prompt" >
         <fragment
-            android:id="@+id/nav_prompt1"
-            android:name="org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment1"
+            android:id="@+id/nav_prompt"
+            android:name="org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment"
             android:label="@string/prompt1"
-            tools:layout="@layout/fragment_prompt1">
+            tools:layout="@layout/fragment_prompt_viewpager">
             <action
                 android:id="@+id/action_Prompt1Fragment_to_SuccessFragment"
                 app:destination="@id/nav_slideshow" />

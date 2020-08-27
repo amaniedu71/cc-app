@@ -10,17 +10,16 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
 import java.util.List;
 import java.util.Map;
 
 
-public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportViewHolder> {
+public class AdminReportAdapter extends RecyclerView.Adapter<AdminReportAdapter.ReportViewHolder> {
 
     private List<Map<String,Object>> mReports; //cached copy
 
-    public ReportAdapter(Context context){
+    public AdminReportAdapter(Context context){
 
     }
 

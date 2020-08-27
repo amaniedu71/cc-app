@@ -10,17 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.navigation.NavHost;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.adapters.ReportAdapter;
-import org.communitycookerfoundation.communitycookerfoundation.adapters.UserReportAdapter;
+import org.communitycookerfoundation.communitycookerfoundation.adapters.UserReportListAdapter;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
 import java.util.List;
@@ -30,7 +27,7 @@ import java.util.List;
  */
 public class HomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
-    private UserReportAdapter mReportAdapter;
+    private UserReportListAdapter mReportAdapter;
     //private LiveData<List<ReportEntity>> mReports;
     private HomeViewModel mViewModel;
     private Button mAddButton;
@@ -53,6 +50,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull  View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
 
 
@@ -82,13 +80,13 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        view.setVisibility(View.INVISIBLE);
+        //view.setVisibility(View.INVISIBLE);
         mRecyclerView.setAdapter(mReportAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setNestedScrollingEnabled(false);
 
         mAddButton = view.findViewById(R.id.add_button);
-        mReportAdapter = new UserReportAdapter(getContext());
+        mReportAdapter = new UserReportListAdapter(getContext());
 
         mViewModel.getAllReports().observe(getViewLifecycleOwner(), new Observer<List<ReportEntity>>() {
             @Override

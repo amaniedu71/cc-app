@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PromptFrag1">
+    tools:context=".ui.prompt.PromptNumFragment">
 
     <TextView
         android:id="@+id/currentPromptNum1"
@@ -57,8 +57,6 @@
                 android:id="@+id/input_answer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:hint="Qty in Ltrs"
-                android:inputType="number"
                 android:maxLines="1" />
 
         </com.google.android.material.textfield.TextInputLayout>

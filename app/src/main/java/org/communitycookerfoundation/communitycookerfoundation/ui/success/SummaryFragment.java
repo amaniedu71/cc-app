@@ -1,14 +1,10 @@
 package org.communitycookerfoundation.communitycookerfoundation.ui.success;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,11 +19,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.SummaryAdapter;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
-import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptViewModel1;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptViewModel;
 
 
 public class SummaryFragment extends Fragment {
@@ -35,7 +27,7 @@ public class SummaryFragment extends Fragment {
     private TextInputEditText mEditText;
     private TextInputLayout mInputEditLayout;
     public static final int CURRENT_PROMPT = 1;
-    private PromptViewModel1 mViewModel;
+    private PromptViewModel mViewModel;
     private SummaryAdapter mRecyclerAdapter;
 
 
@@ -46,7 +38,7 @@ public class SummaryFragment extends Fragment {
             Bundle savedInstanceState
     ) {
         // Inflate the layout for this fragment
-        View fragmentFirst =  inflater.inflate(R.layout.fragment_prompt1, container, false);
+        View fragmentFirst =  inflater.inflate(R.layout.fragment_prompt_num, container, false);
         //showCount = fragmentFirst.findViewById(R.id.textview_first);
         return fragmentFirst;
 
@@ -60,7 +52,7 @@ public class SummaryFragment extends Fragment {
         mInputEditLayout = view.findViewById(R.id.prompt_Layout1);
         TextView currentNum = view.findViewById(R.id.currentPromptNum1);
         NavBackStackEntry navBackStackEntry  = NavHostFragment.findNavController(SummaryFragment.this).getBackStackEntry(R.id.nav_add_report);
-        mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel1.class);
+        mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel.class);
         //currentNum.setText(CURRENT_PROMPT + "/" + TOTAL_PROMPTS);
         mRecyclerAdapter = new SummaryAdapter(getContext());
         mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<ReportEntity>() {

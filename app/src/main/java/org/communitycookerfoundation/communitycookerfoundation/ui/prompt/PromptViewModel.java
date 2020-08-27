@@ -12,22 +12,30 @@ import com.google.firebase.auth.FirebaseUser;
 
 import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
 
-public class PromptViewModel1 extends AndroidViewModel {
+import java.util.List;
+
+public class PromptViewModel extends AndroidViewModel {
     FirebaseUser mCurrentUser;
     private String Prompt1;
     private String resp1;
 
     private DataRepo mRepo;
     private MutableLiveData<ReportEntity> mReport = new MutableLiveData<>();
+    private LiveData<List<ReportPrompt>> mReportPrompts;
 
-    public PromptViewModel1(@NonNull Application application) {
+    public PromptViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mRepo = new DataRepo(application, mCurrentUser);
+        mReportPrompts = mRepo.getTestPrompts();
 
     }
-    public void setReport(ReportEntity report) { mReport.setValue(report); }
+    public LiveData<List<ReportPrompt>> getReportPrompts() {
+        return mReportPrompts;
+    }
+    //public void setReport(ReportEntity report) { mReport.setValue(report); }
     public LiveData<ReportEntity> getReports() {return mReport;}
     public void insertReport(ReportEntity reportEntity) {
         if (mReport != null) {

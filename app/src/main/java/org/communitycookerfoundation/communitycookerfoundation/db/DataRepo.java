@@ -24,6 +24,8 @@ import org.communitycookerfoundation.communitycookerfoundation.db.Dao.ReportDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Dao.UserDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,6 +50,7 @@ public class DataRepo {
 
 
     private MutableLiveData<List<Map<String, Object>>> mUserReports = new MutableLiveData<>();
+    private MutableLiveData<List<Object>> mAllPrompts = new MutableLiveData<>();
 
 
     public LiveData<Boolean> getIsAdmin() {
@@ -371,7 +374,57 @@ public class DataRepo {
         }
         return "null";
     }
-    //TODO: REFACTOR THIS METHOD COMPLETELY!
+    public void queryPromptsFB(){
+        mFirebaseDB.collection("report_set")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            List<Map<String, Object>> tempDocStorage = new ArrayList<>();
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Log.d(TAG, "HERE IT IS "+ document.getId() + " => " + document.getData());
+
+                                List<Object> prompts = new ArrayList<>();
+                                if( document.getData().get("input_type").equals("number")){
+                                    ReportPromptNum reportPromptNum = document.toObject(ReportPromptNum.class);
+                                    prompts.add(reportPromptNum);
+
+                                }
+
+                            }
+
+                            //Log.d(TAG, "STORED: " +  tempDocStorage.get(0).get("name"));
+                        } else {
+                            Log.d(TAG, "Error getting documents: ", task.getException());
+                        }
+                    }
+                });
+
+
+
+    }
+
+
+    public LiveData<List<Object>> getPrompts(){
+
+        return mAllPrompts;
+
+    }
+
+    public LiveData<List<ReportPrompt>> getTestPrompts() {
+
+        MutableLiveData<List<ReportPrompt>> mTestPrompts = new MutableLiveData<>();
+        List<ReportPrompt> prompts = new ArrayList<>();
+        ReportPromptNum testQ1 = new ReportPromptNum("How many litres of water did you use", "number", "", 900, 0);
+        ReportPromptNum testQ2 = new ReportPromptNum("How many cables of trash did you use", "number", "", 20, 0);
+        prompts.add(testQ1);
+        prompts.add(testQ2);
+        mTestPrompts.setValue(prompts);
+        return mTestPrompts;
+
+    }
+
     public void addUser(Map<String, String> cookerUser) {
         Map<String, Object> parentData = new HashMap<>();
         parentData.put("roles", cookerUser);

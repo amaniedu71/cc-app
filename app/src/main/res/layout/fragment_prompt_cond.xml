@@ -7,7 +7,7 @@
     tools:context=".ui.prompt.PromptNumFragment">
 
     <ProgressBar
-        android:id="@+id/promptNumProgBar"
+        android:id="@+id/promptCondProgBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="24dp"
@@ -19,15 +19,15 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/currentPromptNum1"
+        android:id="@+id/currentPromptCond"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/currentPromptPlaceholder"
-        app:layout_constraintBottom_toTopOf="@+id/textPrompt"
-        app:layout_constraintStart_toStartOf="@+id/textPrompt" />
+        app:layout_constraintBottom_toTopOf="@+id/textPromptCond"
+        app:layout_constraintStart_toStartOf="@+id/textPromptCond" />
 
     <TextView
-        android:id="@+id/textPrompt"
+        android:id="@+id/textPromptCond"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -57,22 +57,16 @@
         app:layout_constraintBottom_toTopOf="@id/groupBtns"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textPrompt">
+        app:layout_constraintTop_toBottomOf="@+id/textPromptCond">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/prompt_Layout1"
+
+        <androidx.appcompat.widget.AppCompatSpinner
+            android:id="@+id/choice_spinner"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_weight="78"
-            app:errorEnabled="true">
+            android:entries="@array/bool_cond" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/input_answer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:maxLines="1" />
-
-        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 

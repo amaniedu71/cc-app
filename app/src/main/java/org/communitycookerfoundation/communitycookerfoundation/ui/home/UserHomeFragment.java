@@ -18,24 +18,21 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.UserReportListAdapter;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
-
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment {
+public class UserHomeFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private UserReportListAdapter mReportAdapter;
     //private LiveData<List<ReportEntity>> mReports;
-    private HomeViewModel mViewModel;
+    private UserHomeViewModel mViewModel;
     private Button mAddButton;
     private int count;
     private TextView mWelcomeMessage;
 
 
-    public HomeFragment() {
+    public UserHomeFragment() {
         // Required empty public constructor
 
     }
@@ -56,13 +53,13 @@ public class HomeFragment extends Fragment {
 
 
         mRecyclerView = view.findViewById(R.id.recycler_report1);
-        mViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        mViewModel = new ViewModelProvider(this).get(UserHomeViewModel.class);
 
         mViewModel.getIsAdmin().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean isAdmin) {
                 if (isAdmin) {
-                    NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_nav_home_to_adminFragment);
+                    NavHostFragment.findNavController(UserHomeFragment.this).navigate(R.id.action_nav_home_to_adminFragment);
                 }
 
             }
@@ -71,7 +68,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(Boolean isAuthdUser) {
                 if(isAuthdUser){
-                    View root = HomeFragment.this.getView();
+                    View root = UserHomeFragment.this.getView();
                     if(root != null) root.setVisibility(View.VISIBLE);
 
                 }
@@ -88,7 +85,7 @@ public class HomeFragment extends Fragment {
         mAddButton = view.findViewById(R.id.add_button);
         mReportAdapter = new UserReportListAdapter(getContext());
 
-        mViewModel.getAllReports().observe(getViewLifecycleOwner(), new Observer<List<ReportEntity>>() {
+      /*  mViewModel.getAllReports().observe(getViewLifecycleOwner(), new Observer<List<ReportEntity>>() {
             @Override
             public void onChanged(List<ReportEntity> reportEntities) {
 
@@ -96,7 +93,7 @@ public class HomeFragment extends Fragment {
                 if(reportEntities.size()>0)
                     mViewModel.insertFb(reportEntities.get(reportEntities.size()-1));
             }
-        });
+        });*/
 
 
         count = 0;
@@ -115,7 +112,7 @@ public class HomeFragment extends Fragment {
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.action_HomeFragment_to_Prompt1Fragment);
+                NavHostFragment.findNavController(UserHomeFragment.this).navigate(R.id.action_HomeFragment_to_Prompt1Fragment);
             }
         });
 

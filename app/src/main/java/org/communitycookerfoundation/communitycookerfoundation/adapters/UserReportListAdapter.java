@@ -37,7 +37,7 @@ public class UserReportListAdapter extends RecyclerView.Adapter<UserReportListAd
         if(mReports!= null){
 
             ReportEntity current = mReports.get(position);
-            holder.reportItemView.setText(current.getLiters());
+            holder.reportItemView.setText(current.getResponse());
 
         }
         else

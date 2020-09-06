@@ -33,7 +33,7 @@ public class ManageUsersViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<ReportEntity>> getAllReports() {return mAllReports; }
-    public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
+    //public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
 
     public String getDisplayName() {
         return mCurrentUser.getDisplayName();

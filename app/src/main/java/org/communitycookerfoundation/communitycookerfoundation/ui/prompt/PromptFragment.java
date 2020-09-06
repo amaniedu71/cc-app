@@ -1,11 +1,13 @@
 package org.communitycookerfoundation.communitycookerfoundation.ui.prompt;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -19,14 +21,18 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PromptFragment extends Fragment {
+public class PromptFragment extends Fragment implements PromptNumFragment.OnPromptBtnClicked, PromptCondFragment.OnPromptCondBtnClicked, PromptTextChoicesFragment.OnPromptTextChoicesBtnClicked {
+    private static final String TAG = "PromptFragment";
     TextView showCount;
     private TextInputEditText mEditText;
     private TextInputLayout mInputEditLayout;
@@ -34,6 +40,7 @@ public class PromptFragment extends Fragment {
     private PromptViewModel mViewModel;
     private ViewPager2 mPager;
     private List<ReportPrompt>  mAllPrompts = new ArrayList<>();
+    private FragmentStateAdapter mPromptAdapter;
 
 
     @Override
@@ -54,21 +61,39 @@ public class PromptFragment extends Fragment {
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(mPager.getCurrentItem() > 0) {
+
+                    mPager.setCurrentItem(mPager.getCurrentItem() -1, true);
+
+                }
+            }
+        };
+
+
+        getActivity().getOnBackPressedDispatcher().addCallback(this.getViewLifecycleOwner(), callback);
         mPager = view.findViewById(R.id.prompt_viewpager);
+        mPager.setUserInputEnabled(false);
         /*mEditText = view.findViewById(R.id.input_answer);
         mInputEditLayout = view.findViewById(R.id.prompt_Layout1);
         TextView currentNum = view.findViewById(R.id.currentPromptNum1);*/
         NavBackStackEntry navBackStackEntry  = NavHostFragment.findNavController(PromptFragment.this).getBackStackEntry(R.id.nav_add_report);
         mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel.class);
         //currentNum.setText(CURRENT_PROMPT + "/" + TOTAL_PROMPTS);
-        mPager.setAdapter(getPromptAdapter());
+        mPromptAdapter = getPromptAdapter();
+        mPager.setAdapter(mPromptAdapter);
         mViewModel.getReportPrompts().observe(this.getViewLifecycleOwner(), new Observer<List<ReportPrompt>>() {
             @Override
             public void onChanged(List<ReportPrompt> reportPrompts) {
 
                 mAllPrompts = reportPrompts;
+                mPromptAdapter.notifyDataSetChanged();
+
             }
         });
+
 
 
        /* mEditText.addTextChangedListener(new TextWatcher() {
@@ -135,9 +160,18 @@ public class PromptFragment extends Fragment {
             public Fragment createFragment(int position) {
                 if(mAllPrompts.get(position) instanceof ReportPromptNum){
                     ReportPromptNum prompt = (ReportPromptNum) mAllPrompts.get(position);
-                    return PromptNumFragment.createInstance(prompt.getQuestion(),prompt.getHint(), prompt.getMax_value(), prompt.getMin_value(), position);
+                    return PromptNumFragment.createInstance(prompt.getQuestion(),prompt.getHint(), prompt.getMax_value(), prompt.getMin_value(), position, PromptFragment.this, mAllPrompts.size());
                 }
-                else return PromptNumFragment.createInstance("error", "", 100, 0, position);
+                else if(mAllPrompts.get(position) instanceof ReportPromptCond){
+                    ReportPromptCond promptCond = (ReportPromptCond) mAllPrompts.get(position);
+                    return PromptCondFragment.createInstance(promptCond.getQuestion(), promptCond.getIf_false(), promptCond.getIf_true(), position, PromptFragment.this, mAllPrompts.size());
+                }
+
+                else if(mAllPrompts.get(position) instanceof ReportPromptTextChoices){
+                    ReportPromptTextChoices promptTextChoices = (ReportPromptTextChoices) mAllPrompts.get(position);
+                    return PromptTextChoicesFragment.createInstance(promptTextChoices.getQuestion(), promptTextChoices.getOptions(), position, PromptFragment.this,mAllPrompts.size());
+                }
+                else return PromptNumFragment.createInstance("error", "", 100, 0, position, PromptFragment.this,  mAllPrompts.size());
             }
 
             @Override
@@ -145,6 +179,83 @@ public class PromptFragment extends Fragment {
                 return mAllPrompts.size();
             }
         };
+    }
+
+
+
+    @Override
+    public void onNextClick( String response) {
+        //curPos += 1; 
+        ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
+        validateSave(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
+        if(mPager.getCurrentItem()<mAllPrompts.size()-1){
+            mPager.setCurrentItem(mPager.getCurrentItem()+1,true );
+
+        }
+        else
+            navToSummary();
+
+
+    }
+
+    @Override
+    public void onNextClick(String response, int destination) {
+        validateSave(mPager.getCurrentItem(),response, "text_choices");
+        if(destination<mAllPrompts.size()){
+            mPager.setCurrentItem(destination, true);
+
+        }
+        else if(mPager.getCurrentItem()<mAllPrompts.size()-1) {
+            mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+
+
+        }
+        else
+            navToSummary();
+
+    }
+
+
+
+    @Override
+    public void onBackClick() {
+        if(mPager.getCurrentItem() > 0) {
+            mPager.setCurrentItem(mPager.getCurrentItem()-1, true);
+        }
+        else getParentFragmentManager().popBackStack();
+    }
+
+
+
+    private void validateSave(int pos, String response, String input_type) {
+
+        if(mAllPrompts.get(pos) instanceof ReportPromptNum){
+            ReportPromptNum prompt;
+            prompt = (ReportPromptNum) mAllPrompts.get(pos);
+            mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
+        }
+        if(mAllPrompts.get(pos) instanceof ReportPromptCond){
+            ReportPromptCond prompt;
+            prompt = (ReportPromptCond) mAllPrompts.get(pos);
+            mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
+        }
+        if(mAllPrompts.get(pos) instanceof ReportPromptTextChoices){
+            ReportPromptTextChoices prompt;
+            prompt = (ReportPromptTextChoices) mAllPrompts.get(pos);
+            mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
+        }
+        else
+            Log.e(TAG, "error in adding report to viewmodel");
+        //String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+
+        /*if(input_type.contains("number")){
+            mViewModel.setReport(new ReportEntity(prompt.getQuestion(),response,date));
+        }*/
+    }
+
+    private void navToSummary(){
+        NavHostFragment.findNavController(PromptFragment.this).navigate(R.id.action_Prompt1Fragment_to_SuccessFragment);
+
     }
 
     /*private boolean validateText(String inputString) {

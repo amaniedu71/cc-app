@@ -21,6 +21,8 @@ import org.communitycookerfoundation.communitycookerfoundation.adapters.SummaryA
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptViewModel;
 
+import java.util.List;
+
 
 public class SummaryFragment extends Fragment {
     TextView showCount;
@@ -55,9 +57,9 @@ public class SummaryFragment extends Fragment {
         mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel.class);
         //currentNum.setText(CURRENT_PROMPT + "/" + TOTAL_PROMPTS);
         mRecyclerAdapter = new SummaryAdapter(getContext());
-        mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<ReportEntity>() {
+        mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<List<ReportEntity>>() {
             @Override
-            public void onChanged(ReportEntity reportEntity) {
+            public void onChanged(List<ReportEntity> reportEntity) {
                 mRecyclerAdapter.setFields(reportEntity);
 
             }

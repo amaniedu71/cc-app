@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
@@ -15,7 +16,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -25,12 +28,16 @@ import org.communitycookerfoundation.communitycookerfoundation.db.Dao.UserDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class DataRepo {
@@ -45,12 +52,12 @@ public class DataRepo {
     private MutableLiveData<Boolean> mIsAdmin = new MutableLiveData<>();
     private Integer mUserCount;
     private Boolean misUserGen;
-    private final Observer mObserveUserDB;
+   // private final Observer mObserveUserDB;
     private MutableLiveData<List<Map<String, Object>>> mUserList = new MutableLiveData<>();
 
 
     private MutableLiveData<List<Map<String, Object>>> mUserReports = new MutableLiveData<>();
-    private MutableLiveData<List<Object>> mAllPrompts = new MutableLiveData<>();
+    private MutableLiveData<List<ReportPrompt>> mAllPrompts = new MutableLiveData<>();
 
 
     public LiveData<Boolean> getIsAdmin() {
@@ -94,7 +101,7 @@ public class DataRepo {
         }*/
 
 
-        mObserveUserDB = new Observer<UserEntity>() {
+        /*mObserveUserDB = new Observer<UserEntity>() {
             @Override
             public void onChanged(UserEntity userEntity) {
                 if (userEntity != null) {
@@ -105,9 +112,9 @@ public class DataRepo {
                     //generateUser();
                 }
             }
-        };
-        mUserEntity =  mUserDao.findByUserId(firebaseUser.getUid());
-        mUserEntity.observeForever(mObserveUserDB);
+        };*/
+//        mUserEntity =  mUserDao.findByUserId(firebaseUser.getUid());
+//        mUserEntity.observeForever(mObserveUserDB);
             /*@Override
             public void onChanged(Integer integer) {
                 if (integer.equals(0)) {
@@ -150,31 +157,7 @@ public class DataRepo {
 
 
 
-    public void insertReportFb(ReportEntity reportToInsert) {
-        // [START add_ada_lovelace]
-        // Create a new user with a first and last name
-        Map<String, Object> report = new HashMap<>();
-        report.put("report_prompt", "QtyLiters");
-        report.put("report_response", reportToInsert.getLiters());
-        report.put("report_date", reportToInsert.getDate());
-        int id = reportToInsert.getId();
-        mFirebaseDB.collection(("users")).document(mUserId).collection("user_reports")
-                .document("report_"+id)
-                .set(report)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Report added successfully! ");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding report", e);
-                    }
-                });
-        // [END add_ada_lovelace]
-    }
+
 
     private void generateUser() {
 
@@ -186,7 +169,7 @@ public class DataRepo {
         user.put("name", mUserName);
         user.put("user_id", mUserId);
 
-        assert mIsAdmin != null;
+        //assert mIsAdmin != null;
             // Add a new document with a generated ID
         mFirebaseDB.collection("users").document(mUserId)
                 .set(user)
@@ -224,13 +207,40 @@ public class DataRepo {
         return mAllReports;
     }
 
-    public void insertReportDB(final ReportEntity report) {
-        ReportDB.databaseWriteExecutor.execute(new Runnable() {
+    public void insertReport(final List<ReportEntity> reportListToInsert) {
+       /* ReportDB.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 mReportDao.insert(report);
             }
         });
+*/      List<Map<String,Object>> listToInsert = new ArrayList<>();
+        String curDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        for(ReportEntity report:reportListToInsert) {
+            Map<String, Object> reportToInsert = new HashMap<>();
+            reportToInsert.put("report_prompt", report.getPrompt());
+            reportToInsert.put("report_response", report.getResponse());
+           // reportToInsert.put("report_date", curDate);
+            listToInsert.add(reportToInsert);
+        }
+        for(int ind = 0; ind<listToInsert.size(); ind++) {
+            Map<String, Object> reportToInsert = listToInsert.get(ind);
+            mFirebaseDB.collection(("users")).document(mUserId).collection("user_reports")
+                    .document(curDate)
+                    .collection("responses").document("response_"+ind).set(reportToInsert)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "Report added successfully! ");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error adding report", e);
+                        }
+                    });
+        }
     }
 
     private void checkAdminFb() {
@@ -295,7 +305,7 @@ public class DataRepo {
     }
 
     public void clearObservedData() {
-        mUserEntity.removeObserver(mObserveUserDB);
+  //      mUserEntity.removeObserver(mObserveUserDB);
 
     }
 
@@ -389,7 +399,6 @@ public class DataRepo {
                                 if( document.getData().get("input_type").equals("number")){
                                     ReportPromptNum reportPromptNum = document.toObject(ReportPromptNum.class);
                                     prompts.add(reportPromptNum);
-
                                 }
 
                             }
@@ -405,9 +414,49 @@ public class DataRepo {
 
     }
 
+    private void getPromptsFb(){
 
-    public LiveData<List<Object>> getPrompts(){
+        mFirebaseDB.collection("report_dummy_set"/*report_set*/)
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@Nullable QuerySnapshot value,
+                                        @Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            Log.w(TAG, "Listen failed.", e);
+                            return;
+                        }
 
+                        List<ReportPrompt> prompts = new ArrayList<>();
+                        for (QueryDocumentSnapshot doc : value) {
+                            if (doc.get("input_type") != null) {
+                                String inputType = (String) doc.get("input_type");
+                                if(inputType.contains("number")){
+                                    ReportPromptNum reportPromptNum = doc.toObject(ReportPromptNum.class);
+                                    prompts.add(reportPromptNum);
+                                }
+                                else if(inputType.contains("conditional_bool")){
+                                    ReportPromptCond reportPromptCond = doc.toObject(ReportPromptCond.class);
+                                    prompts.add(reportPromptCond);
+                                }
+                                else if(inputType.contains("text_choices")){
+                                    ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
+                                    prompts.add(reportPromptTextChoices);
+                                }
+
+                            }
+                        }
+                        mAllPrompts.setValue(prompts);
+                        for (ReportPrompt logPrompt:prompts) {
+                            Log.d(TAG, "Log Prompts: " + logPrompt);
+                        }
+                    }
+                });
+
+
+
+    }
+    public LiveData<List<ReportPrompt>> getAllPrompts(){
+        getPromptsFb();
         return mAllPrompts;
 
     }

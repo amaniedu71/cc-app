@@ -12,29 +12,25 @@ public class ReportEntity {
     @PrimaryKey(autoGenerate = true)
     private Integer id;
 
-    @ColumnInfo(name = "liters")
+    @ColumnInfo(name = "response")
     @NonNull
-    private String mLiters;
+    private String mResponse;
 
-
-    @ColumnInfo(name = "prompt1")
+    @ColumnInfo(name = "prompt")
     @NonNull
-    private String mPrompt1;
-    @NonNull
-    private String mDate;
+    private String mPrompt;
 
 
-    public ReportEntity(@NonNull String prompt1, @NonNull String liters, String date) {
-        this.mLiters = liters;
-        this.mDate = date;
-        this.mPrompt1 = prompt1;
+    public ReportEntity(@NonNull String prompt, @NonNull String response) {
+        this.mResponse = response;
+        this.mPrompt = prompt;
+
     }
-    public String getDate() { return mDate;}
-    public String getLiters() { return mLiters;}
+    public String getResponse() { return mResponse;}
 
     @NonNull
-    public String getPrompt1() {
-        return mPrompt1;
+    public String getPrompt() {
+        return mPrompt;
     }
     public Integer getId() {return id;}
     public void setId(Integer id) {this.id = id;}

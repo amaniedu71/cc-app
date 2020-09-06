@@ -11,8 +11,10 @@ public class ReportPromptNum extends ReportPrompt{
     private int max_value;
     private int min_value;
 
-    @DocumentId
-    private int promptID;
+
+    public ReportPromptNum(){
+
+    }
 
     public ReportPromptNum(String question, String input_type, String hint, int max_value, int min_value){
 

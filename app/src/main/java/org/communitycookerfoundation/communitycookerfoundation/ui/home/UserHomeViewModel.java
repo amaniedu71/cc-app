@@ -18,7 +18,7 @@ import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportE
 
 import java.util.List;
 
-public class HomeViewModel extends AndroidViewModel {
+public class UserHomeViewModel extends AndroidViewModel {
 
     FirebaseUser mCurrentUser;
     private MutableLiveData<Boolean> mIsAdmin = new MutableLiveData<>();
@@ -26,7 +26,7 @@ public class HomeViewModel extends AndroidViewModel {
     private LiveData<List<ReportEntity>> mAllReports;
     private MutableLiveData<Boolean> mIsAuthdUser = new MutableLiveData<>();
 
-    public HomeViewModel(@NonNull Application application) {
+    public UserHomeViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mRepo = new DataRepo(application, mCurrentUser);
@@ -77,7 +77,7 @@ public class HomeViewModel extends AndroidViewModel {
     }
 
     public LiveData<List<ReportEntity>> getAllReports() {return mAllReports; }
-    public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
+    //public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
 
     public LiveData<Boolean> getIsAdmin() {
         return mIsAdmin;

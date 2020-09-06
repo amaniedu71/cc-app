@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.home.HomeFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.home.UserHomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home">
 
@@ -49,6 +49,11 @@
                 app:popUpTo="@id/nav_home"
                 app:popUpToInclusive="true" />
         </fragment>
+        <fragment
+            android:id="@+id/summaryFragment"
+            android:name="org.communitycookerfoundation.communitycookerfoundation.ui.success.SummaryFragment"
+            android:label="fragment_summary_list"
+            tools:layout="@layout/fragment_summary_list" />
     </navigation>
     <fragment
         android:id="@+id/adminFragment"

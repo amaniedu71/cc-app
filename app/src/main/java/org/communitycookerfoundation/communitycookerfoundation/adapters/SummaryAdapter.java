@@ -13,12 +13,11 @@ import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
 import java.util.List;
-import java.util.Map;
 
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
-    private ReportEntity mFields; //cached copy
+    private List<ReportEntity> mFields; //cached copy
 
     public SummaryAdapter(Context context){
 
@@ -37,8 +36,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     @Override
     public void onBindViewHolder(@NonNull SummaryViewHolder holder, int position) {
         if(mFields!= null){
-            holder.prompt1ItemView.setText(mFields.getPrompt1());
-            holder.response1ItemView.setText(mFields.getLiters());
+            holder.prompt1ItemView.setText(mFields.get(position).getPrompt());
+            holder.response1ItemView.setText(mFields.get(position).getResponse());
 
 
         }
@@ -49,10 +48,10 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     }
     @Override
     public int getItemCount() {
-        return 1;
+        return mFields.size();
     }
 
-    public void setFields(ReportEntity reportEntity) {
+    public void setFields(List<ReportEntity> reportEntity) {
         mFields = reportEntity;
         notifyDataSetChanged();
     }

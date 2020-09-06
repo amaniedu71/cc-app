@@ -44,13 +44,7 @@ public class SuccessFragment extends Fragment {
                 NavHostFragment.findNavController(SuccessFragment.this).navigate(R.id.action_SuccessFragment_to_HomeFragment);
             }
         });
-        mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<ReportEntity>() {
-            @Override
-            public void onChanged(ReportEntity reportEntity) {
-                mViewModel.insertReport(reportEntity);
 
-            }
-        });
 
     }
 }

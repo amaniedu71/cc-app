@@ -5,28 +5,30 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
 
-@Entity(tableName = "report_table")
-public class ReportEntity extends BasicReportEntity {
 
-    @PrimaryKey(autoGenerate = true)
+//@Entity(tableName = "report_table")
+public class ReportListEntity extends BasicReportEntity{
+
+//    @PrimaryKey(autoGenerate = true)
     private Integer id;
 
-    @ColumnInfo(name = "response")
+//    @ColumnInfo(name = "response")
     @NonNull
-    private String mResponse;
+    private List<String> mResponses;
 
-    @ColumnInfo(name = "prompt")
+//    @ColumnInfo(name = "prompt")
     @NonNull
     private String mPrompt;
 
 
-    public ReportEntity(@NonNull String prompt, @NonNull String response) {
-        this.mResponse = response;
+    public ReportListEntity(@NonNull String prompt, @NonNull List<String> responses) {
+        this.mResponses = responses;
         this.mPrompt = prompt;
 
     }
-    public String getResponse() { return mResponse;}
+    public List<String> getResponses() { return mResponses;}
 
     @NonNull
     public String getPrompt() {

@@ -52,7 +52,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline3"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/barrier3" />
+                app:layout_constraintTop_toTopOf="@+id/barrier3"
+                tools:text="asdfasdfadfasdfasfasdfasdfasdfasdfasdf" />
 
             <TextView
                 android:id="@+id/resp1_text"

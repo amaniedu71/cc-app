@@ -25,11 +25,14 @@ import com.google.firebase.firestore.SetOptions;
 
 import org.communitycookerfoundation.communitycookerfoundation.db.Dao.ReportDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Dao.UserDao;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptOptional;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
 import java.text.SimpleDateFormat;
@@ -207,7 +210,7 @@ public class DataRepo {
         return mAllReports;
     }
 
-    public void insertReport(final List<ReportEntity> reportListToInsert) {
+    public void insertReport(final List<BasicReportEntity> reportListToInsert) {
        /* ReportDB.databaseWriteExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -216,12 +219,25 @@ public class DataRepo {
         });
 */      List<Map<String,Object>> listToInsert = new ArrayList<>();
         String curDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-        for(ReportEntity report:reportListToInsert) {
+
+        for(BasicReportEntity report:reportListToInsert) {
+
             Map<String, Object> reportToInsert = new HashMap<>();
-            reportToInsert.put("report_prompt", report.getPrompt());
-            reportToInsert.put("report_response", report.getResponse());
-           // reportToInsert.put("report_date", curDate);
-            listToInsert.add(reportToInsert);
+            if(report instanceof ReportEntity ) {
+                ReportEntity entity = (ReportEntity) report;
+                reportToInsert.put("report_prompt", entity.getPrompt());
+                reportToInsert.put("report_response", entity.getResponse());
+                // reportToInsert.put("report_date", curDate);
+                listToInsert.add(reportToInsert);
+            }
+            else if(report instanceof ReportListEntity) {
+                ReportListEntity entity = (ReportListEntity) report;
+                reportToInsert.put("report_prompt", entity.getPrompt());
+                reportToInsert.put("report_response", entity.getResponses());
+                // reportToInsert.put("report_date", curDate);
+                listToInsert.add(reportToInsert);
+
+            }
         }
         for(int ind = 0; ind<listToInsert.size(); ind++) {
             Map<String, Object> reportToInsert = listToInsert.get(ind);
@@ -442,6 +458,12 @@ public class DataRepo {
                                     ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
                                     prompts.add(reportPromptTextChoices);
                                 }
+                                else if(inputType.contains("optional_choices")){
+                                    ReportPromptOptional reportPromptOptional = doc.toObject(ReportPromptOptional.class);
+                                    prompts.add(reportPromptOptional);
+                                }
+
+
 
                             }
                         }

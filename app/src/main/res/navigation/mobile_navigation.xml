@@ -30,13 +30,13 @@
             android:name="org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment"
             android:label="@string/prompt1"
             tools:layout="@layout/fragment_prompt_viewpager">
-            <action
-                android:id="@+id/action_Prompt1Fragment_to_SuccessFragment"
-                app:destination="@id/nav_slideshow" />
 
             <argument
                 android:name="myArg"
                 app:argType="string" />
+            <action
+                android:id="@+id/action_nav_prompt_to_summaryFragment"
+                app:destination="@id/summaryFragment" />
         </fragment>
         <fragment
             android:id="@+id/nav_slideshow"
@@ -53,7 +53,11 @@
             android:id="@+id/summaryFragment"
             android:name="org.communitycookerfoundation.communitycookerfoundation.ui.success.SummaryFragment"
             android:label="fragment_summary_list"
-            tools:layout="@layout/fragment_summary_list" />
+            tools:layout="@layout/fragment_summary_list" >
+            <action
+                android:id="@+id/action_summaryFragment_to_nav_slideshow"
+                app:destination="@id/nav_slideshow" />
+        </fragment>
     </navigation>
     <fragment
         android:id="@+id/adminFragment"

@@ -22,16 +22,18 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
+import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptOptional;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class PromptFragment extends Fragment implements PromptNumFragment.OnPromptBtnClicked, PromptCondFragment.OnPromptCondBtnClicked, PromptTextChoicesFragment.OnPromptTextChoicesBtnClicked {
+public class PromptFragment extends Fragment implements PromptNumFragment.OnPromptBtnClicked, PromptCondFragment.OnPromptCondBtnClicked, PromptTextChoicesFragment.OnPromptTextChoicesBtnClicked, PromptOptionalFragment.OnPromptOptionalBtnClicked {
     private static final String TAG = "PromptFragment";
     TextView showCount;
     private TextInputEditText mEditText;
@@ -171,6 +173,11 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
                     ReportPromptTextChoices promptTextChoices = (ReportPromptTextChoices) mAllPrompts.get(position);
                     return PromptTextChoicesFragment.createInstance(promptTextChoices.getQuestion(), promptTextChoices.getOptions(), position, PromptFragment.this,mAllPrompts.size());
                 }
+                else if(mAllPrompts.get(position) instanceof ReportPromptOptional){
+                    ReportPromptOptional promptOptional = (ReportPromptOptional) mAllPrompts.get(position);
+                    return PromptOptionalFragment.createInstance(promptOptional.getQuestion(), promptOptional.getOptions(), position, PromptFragment.this, mAllPrompts.size());
+                }
+
                 else return PromptNumFragment.createInstance("error", "", 100, 0, position, PromptFragment.this,  mAllPrompts.size());
             }
 
@@ -216,6 +223,28 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     }
 
 
+    @Override
+    public void onNextClick(List<String> response) {
+        ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
+        validateSaveList(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
+        if(mPager.getCurrentItem()<mAllPrompts.size()-1){
+            mPager.setCurrentItem(mPager.getCurrentItem()+1,true );
+
+        }
+        else
+            navToSummary();
+    }
+
+    private void validateSaveList(int currentItem, List<String> response, String input_type) {
+
+        if(mAllPrompts.get(currentItem) instanceof ReportPromptOptional){
+
+            ReportPromptOptional prompt;
+            prompt = (ReportPromptOptional) mAllPrompts.get(currentItem);
+
+            mViewModel.addReport(new ReportListEntity(prompt.getQuestion(),response), currentItem);
+        }
+    }
 
     @Override
     public void onBackClick() {
@@ -254,7 +283,7 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     }
 
     private void navToSummary(){
-        NavHostFragment.findNavController(PromptFragment.this).navigate(R.id.action_Prompt1Fragment_to_SuccessFragment);
+        NavHostFragment.findNavController(PromptFragment.this).navigate(R.id.action_nav_prompt_to_summaryFragment);
 
     }
 

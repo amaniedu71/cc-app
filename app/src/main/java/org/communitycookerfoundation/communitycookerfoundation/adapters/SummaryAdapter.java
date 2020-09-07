@@ -10,24 +10,25 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
 
 import java.util.List;
 
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
-    private List<ReportEntity> mFields; //cached copy
+    private List<BasicReportEntity> mFields; //cached copy
 
     public SummaryAdapter(Context context){
 
     }
 
-
     @NonNull
     @Override
     public SummaryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.user_item, parent, false);
+        View itemView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_summary_item, parent, false);
         return new SummaryViewHolder(itemView);
     }
 
@@ -36,22 +37,30 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     @Override
     public void onBindViewHolder(@NonNull SummaryViewHolder holder, int position) {
         if(mFields!= null){
-            holder.prompt1ItemView.setText(mFields.get(position).getPrompt());
-            holder.response1ItemView.setText(mFields.get(position).getResponse());
+            if(mFields.get(position) instanceof ReportEntity) {
+                holder.prompt1ItemView.setText(( ((ReportEntity) mFields.get(position)).getPrompt()));
+                holder.response1ItemView.setText(((ReportEntity) mFields.get(position)).getResponse());
+            }
+            else if(mFields.get(position) instanceof ReportListEntity){
+                holder.prompt1ItemView.setText(((ReportListEntity) mFields.get(position)).getPrompt());
+                String responseToPut = "";
+                for(String resp:((ReportListEntity)mFields.get(position)).getResponses()){
+                    responseToPut += resp+",";
 
+                }
+                holder.response1ItemView.setText(responseToPut);
+            }
 
         }
         else
             holder.prompt1ItemView.setText("No reports submitted! ");
-
-
     }
     @Override
     public int getItemCount() {
         return mFields.size();
     }
 
-    public void setFields(List<ReportEntity> reportEntity) {
+    public void setFields(List<BasicReportEntity> reportEntity) {
         mFields = reportEntity;
         notifyDataSetChanged();
     }

@@ -78,14 +78,14 @@ public class AddCookerFragment  extends DialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        /*try {
+        try {
             // Instantiate the NoticeDialogListener so we can send events to the host
             mListener = (AddCookerListener) context;
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString()
                     + " must implement NoticeDialogListener");
-        }*/
+        }
     }
 
     public interface AddCookerListener{

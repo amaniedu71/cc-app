@@ -22,7 +22,7 @@
     <string name="sign_out_failure">Try again later!</string>
     <string name="currentPromptPlaceholder">1/9</string>
     <string name="promptText1">"How many liters of water have you used today? "</string>
-    <string name="add_report">Add a Report</string>
+    <string name="add_report">Complete Daily Record</string>
     <string name="toast_empty_string">Please add a value!</string>
     <string name="prompt1">Prompt1</string>
     <string name="welcome_message">Hello</string>

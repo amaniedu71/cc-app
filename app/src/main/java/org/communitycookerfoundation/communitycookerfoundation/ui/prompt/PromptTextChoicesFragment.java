@@ -45,6 +45,8 @@ public class PromptTextChoicesFragment extends Fragment {
 //    private static final String IF_TRUE = "if_true";
     // private static final String HINT = "hint";
     private static final String CUR_POS = "cur_pos";
+    private static final String PREV_POS = "prev_pos";
+
     private static final String SIZE = "size";
     private final OnPromptTextChoicesBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
@@ -71,7 +73,7 @@ public class PromptTextChoicesFragment extends Fragment {
     private Button mCancelBtn;
     private int mPromptSize;
     private Spinner mSpinner;
-
+    private int mPrevPos;
 
     public PromptTextChoicesFragment(List<String> options, OnPromptTextChoicesBtnClicked nextClicked) {
         mBtnClicked = nextClicked;
@@ -88,13 +90,14 @@ public class PromptTextChoicesFragment extends Fragment {
      * @return A new instance of fragment PromptTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PromptTextChoicesFragment createInstance(String question, List<String> options, int position, OnPromptTextChoicesBtnClicked nextClicked, int isLast) {
+    public static PromptTextChoicesFragment createInstance(String question, List<String> options, int position, OnPromptTextChoicesBtnClicked nextClicked, int isLast, int prev) {
         PromptTextChoicesFragment fragment = new PromptTextChoicesFragment(options, nextClicked);
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
         //  args.putString(HINT, hint);
         args.putInt(CUR_POS, position);
         args.putInt(SIZE, isLast);
+        args.putInt(PREV_POS, prev);
 
 
         fragment.setArguments(args);
@@ -110,6 +113,7 @@ public class PromptTextChoicesFragment extends Fragment {
 
             mCurPos = getArguments().getInt(CUR_POS);
             mPromptSize = getArguments().getInt(SIZE);
+            mPrevPos = getArguments().getInt(PREV_POS);
 
         }
     }
@@ -190,7 +194,7 @@ public class PromptTextChoicesFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBtnClicked.onBackClick();
+                mBtnClicked.onBackClick(mPrevPos);
             }
 
 
@@ -239,7 +243,7 @@ public class PromptTextChoicesFragment extends Fragment {
 
     public  interface OnPromptTextChoicesBtnClicked {
         void onNextClick( String response);
-        void onBackClick();
+        void onBackClick(int prevPos);
 
     }
 

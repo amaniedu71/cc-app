@@ -40,6 +40,7 @@ public class PromptCondFragment extends Fragment {
     private static final String IF_TRUE = "if_true";
    // private static final String HINT = "hint";
     private static final String CUR_POS = "cur_pos";
+    private static final String PREV_POS = "prev_pos";
     private static final String SIZE = "size";
     private final OnPromptCondBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
@@ -67,6 +68,7 @@ public class PromptCondFragment extends Fragment {
     private Spinner mSpinner;
     private int mIfFalse;
     private int mIfTrue;
+    private int mPrevPos;
 
     public PromptCondFragment(OnPromptCondBtnClicked nextClicked) {
         mBtnClicked = nextClicked;
@@ -82,7 +84,7 @@ public class PromptCondFragment extends Fragment {
      * @return A new instance of fragment PromptTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PromptCondFragment createInstance(String question, int if_false, int if_true, int  position, OnPromptCondBtnClicked nextClicked, int isLast) {
+    public static PromptCondFragment createInstance(String question, int if_false, int if_true, int  position, OnPromptCondBtnClicked nextClicked, int isLast, int prev) {
         PromptCondFragment fragment = new PromptCondFragment(nextClicked);
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
@@ -91,7 +93,7 @@ public class PromptCondFragment extends Fragment {
         args.putInt(IF_TRUE, if_true);
         args.putInt(CUR_POS, position);
         args.putInt(SIZE, isLast);
-
+        args.putInt(PREV_POS, prev);
 
         fragment.setArguments(args);
         return fragment;
@@ -107,6 +109,7 @@ public class PromptCondFragment extends Fragment {
             mIfTrue = getArguments().getInt(IF_TRUE);
             mCurPos = getArguments().getInt(CUR_POS);
             mPromptSize = getArguments().getInt(SIZE);
+            mPrevPos = getArguments().getInt(PREV_POS);
 
         }
     }
@@ -191,7 +194,7 @@ public class PromptCondFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBtnClicked.onBackClick();
+                mBtnClicked.onBackClick(mPrevPos);
             }
 
 
@@ -240,7 +243,7 @@ public class PromptCondFragment extends Fragment {
 
     public  interface OnPromptCondBtnClicked {
         void onNextClick( String response ,int destination);
-        void onBackClick();
+        void onBackClick(int prevPos);
 
     }
 

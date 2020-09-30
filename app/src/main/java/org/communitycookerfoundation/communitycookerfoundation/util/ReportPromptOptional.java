@@ -16,11 +16,12 @@ public class ReportPromptOptional extends ReportPrompt{
 
     }
 
-    public ReportPromptOptional(String question, String input_type, List<String> options){
+    public ReportPromptOptional(String question, String input_type, List<String> options, int question_id){
 
         this.question = question;
         this.input_type = input_type;
         this.options = options;
+        this.question_id  = question_id;
 
 
 
@@ -34,6 +35,11 @@ public class ReportPromptOptional extends ReportPrompt{
     @Override
     public String getInput_type() {
         return input_type;
+    }
+
+    @Override
+    public int getQuestion_id() {
+        return question_id;
     }
 
     public List<String> getOptions() {

@@ -16,13 +16,14 @@ public class ReportPromptCond extends ReportPrompt{
 
     }
 
-    public ReportPromptCond(String question, String input_type, /*String hint,*/ int if_false, int if_true){
+    public ReportPromptCond(String question, String input_type, /*String hint,*/ int if_false, int if_true, int question_id){
 
         this.question = question;
         this.input_type = input_type;
 //        this.hint = hint;
         this.if_false = if_false;
         this.if_true = if_true;
+        this.question_id = question_id;
 
     }
 
@@ -34,6 +35,11 @@ public class ReportPromptCond extends ReportPrompt{
     @Override
     public String getInput_type() {
         return input_type;
+    }
+
+    @Override
+    public int getQuestion_id() {
+        return question_id;
     }
 
     /*public String getHint() {

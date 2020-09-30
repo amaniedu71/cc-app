@@ -65,18 +65,28 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
         notifyDataSetChanged();
     }
 
-    public static class SummaryViewHolder extends RecyclerView.ViewHolder {
+    public class SummaryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView prompt1ItemView;
         public final TextView response1ItemView;
-
-
-
 
         public SummaryViewHolder(@NonNull View itemView) {
             super(itemView);
             this.prompt1ItemView = itemView.findViewById(R.id.prompt1_summary);
             this.response1ItemView = itemView.findViewById(R.id.response1_summary);
+            itemView.setOnClickListener(this);
 
         }
+
+        @Override
+        public void onClick(View view) {
+
+
+
+        }
+    }
+    public interface OnSumaryListener {
+
+        void onReportListClick(int reportId);
+
     }
 }

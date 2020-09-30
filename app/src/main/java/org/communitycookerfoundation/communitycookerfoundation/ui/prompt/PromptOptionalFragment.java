@@ -47,6 +47,7 @@ public class PromptOptionalFragment extends Fragment {
 //    private static final String IF_TRUE = "if_true";
     // private static final String HINT = "hint";
     private static final String CUR_POS = "cur_pos";
+    private static final String PREV_POS = "prev_pos";
     private static final String SIZE = "size";
     private final OnPromptOptionalBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
@@ -73,6 +74,7 @@ public class PromptOptionalFragment extends Fragment {
     private Button mCancelBtn;
     private int mPromptSize;
     private CheckBox mCheckBox;
+    private int mPrevPos;
 
 
     public PromptOptionalFragment(List<String> options, OnPromptOptionalBtnClicked nextClicked) {
@@ -90,13 +92,14 @@ public class PromptOptionalFragment extends Fragment {
      * @return A new instance of fragment PromptTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PromptOptionalFragment createInstance(String question, List<String> options, int position, OnPromptOptionalBtnClicked nextClicked, int isLast) {
+    public static PromptOptionalFragment createInstance(String question, List<String> options, int position, OnPromptOptionalBtnClicked nextClicked, int isLast, int prev) {
         PromptOptionalFragment fragment = new PromptOptionalFragment(options, nextClicked);
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
         //  args.putString(HINT, hint);
         args.putInt(CUR_POS, position);
         args.putInt(SIZE, isLast);
+        args.putInt(PREV_POS, prev);
 
 
         fragment.setArguments(args);
@@ -112,6 +115,7 @@ public class PromptOptionalFragment extends Fragment {
 
             mCurPos = getArguments().getInt(CUR_POS);
             mPromptSize = getArguments().getInt(SIZE);
+            mPrevPos = getArguments().getInt(PREV_POS);
 
         }
     }
@@ -204,7 +208,7 @@ public class PromptOptionalFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBtnClicked.onBackClick();
+                mBtnClicked.onBackClick(mPrevPos);
             }
 
 
@@ -253,7 +257,7 @@ public class PromptOptionalFragment extends Fragment {
 
     public  interface OnPromptOptionalBtnClicked {
         void onNextClick( List<String> response);
-        void onBackClick();
+        void onBackClick(int prevPos);
 
     }
 

@@ -32,19 +32,32 @@
             tools:text="Review your responses!" />
 
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/summary_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/welcomeText"
+            tools:listitem="@layout/recycler_summary_item">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/card_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="4dp"
             app:cardPreventCornerOverlap="true"
             app:cardUseCompatPadding="true"
             app:contentPadding="16dp"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/welcomeText">
+            app:layout_constraintTop_toBottomOf="@+id/summary_list">
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -69,18 +82,6 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.cardview.widget.CardView>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/summary_list"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_add"
-            tools:listitem="@layout/recycler_summary_item">
-
-        </androidx.recyclerview.widget.RecyclerView>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

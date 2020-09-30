@@ -23,6 +23,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
+import org.communitycookerfoundation.communitycookerfoundation.ui.home.UserHomeFragment;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
@@ -30,7 +31,9 @@ import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class PromptFragment extends Fragment implements PromptNumFragment.OnPromptBtnClicked, PromptCondFragment.OnPromptCondBtnClicked, PromptTextChoicesFragment.OnPromptTextChoicesBtnClicked, PromptOptionalFragment.OnPromptOptionalBtnClicked {
@@ -43,7 +46,8 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     private ViewPager2 mPager;
     private List<ReportPrompt>  mAllPrompts = new ArrayList<>();
     private FragmentStateAdapter mPromptAdapter;
-
+    private int mPrevPos;
+    Map<Integer, Integer> backDestinationMap = new HashMap<Integer, Integer>();
 
     @Override
     public View onCreateView(
@@ -63,12 +67,19 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
 
         super.onViewCreated(view, savedInstanceState);
+        mPrevPos = -1;
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if(mPager.getCurrentItem() > 0) {
-
-                    mPager.setCurrentItem(mPager.getCurrentItem() -1, true);
+                    if(backDestinationMap.get(mPager.getCurrentItem()) != null){
+                        int prev = backDestinationMap.get(mPager.getCurrentItem());
+                        Log.d(TAG, "Back is"+prev);
+                        mPager.setCurrentItem(prev, false);
+                    }
+                    else{
+                        mPager.setCurrentItem(mPager.getCurrentItem()-1, false);
+                    }
 
                 }
             }
@@ -162,23 +173,23 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
             public Fragment createFragment(int position) {
                 if(mAllPrompts.get(position) instanceof ReportPromptNum){
                     ReportPromptNum prompt = (ReportPromptNum) mAllPrompts.get(position);
-                    return PromptNumFragment.createInstance(prompt.getQuestion(),prompt.getHint(), prompt.getMax_value(), prompt.getMin_value(), position, PromptFragment.this, mAllPrompts.size());
+                    return PromptNumFragment.createInstance(prompt.getQuestion(),prompt.getHint(), prompt.getMax_value(), prompt.getMin_value(), position, PromptFragment.this, mAllPrompts.size(), mPrevPos);
                 }
                 else if(mAllPrompts.get(position) instanceof ReportPromptCond){
                     ReportPromptCond promptCond = (ReportPromptCond) mAllPrompts.get(position);
-                    return PromptCondFragment.createInstance(promptCond.getQuestion(), promptCond.getIf_false(), promptCond.getIf_true(), position, PromptFragment.this, mAllPrompts.size());
+                    return PromptCondFragment.createInstance(promptCond.getQuestion(), promptCond.getIf_false(), promptCond.getIf_true(), position, PromptFragment.this, mAllPrompts.size(), mPrevPos);
                 }
 
                 else if(mAllPrompts.get(position) instanceof ReportPromptTextChoices){
                     ReportPromptTextChoices promptTextChoices = (ReportPromptTextChoices) mAllPrompts.get(position);
-                    return PromptTextChoicesFragment.createInstance(promptTextChoices.getQuestion(), promptTextChoices.getOptions(), position, PromptFragment.this,mAllPrompts.size());
+                    return PromptTextChoicesFragment.createInstance(promptTextChoices.getQuestion(), promptTextChoices.getOptions(), position, PromptFragment.this,mAllPrompts.size(), mPrevPos);
                 }
                 else if(mAllPrompts.get(position) instanceof ReportPromptOptional){
                     ReportPromptOptional promptOptional = (ReportPromptOptional) mAllPrompts.get(position);
-                    return PromptOptionalFragment.createInstance(promptOptional.getQuestion(), promptOptional.getOptions(), position, PromptFragment.this, mAllPrompts.size());
+                    return PromptOptionalFragment.createInstance(promptOptional.getQuestion(), promptOptional.getOptions(), position, PromptFragment.this, mAllPrompts.size(), mPrevPos);
                 }
 
-                else return PromptNumFragment.createInstance("error", "", 100, 0, position, PromptFragment.this,  mAllPrompts.size());
+                else return PromptNumFragment.createInstance("error", "", 100, 0, position, PromptFragment.this,  mAllPrompts.size(), mPrevPos);
             }
 
             @Override
@@ -196,6 +207,7 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
         validateSave(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
         if(mPager.getCurrentItem()<mAllPrompts.size()-1){
+           // mPrevPos = mPager.getCurrentItem() -1;
             mPager.setCurrentItem(mPager.getCurrentItem()+1,true );
 
         }
@@ -209,7 +221,32 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     public void onNextClick(String response, int destination) {
         validateSave(mPager.getCurrentItem(),response, "text_choices");
         if(destination<mAllPrompts.size()){
-            mPager.setCurrentItem(destination, true);
+            ReportPromptCond tempPrompt = (ReportPromptCond) mAllPrompts.get(mPager.getCurrentItem());
+            boolean isTrue= tempPrompt.getIf_true() == destination;
+            if(backDestinationMap.get(tempPrompt.getIf_false()) == null && backDestinationMap.get(tempPrompt.getIf_true()) == null){
+                backDestinationMap.put(destination, mPager.getCurrentItem());
+                mPager.setCurrentItem(destination, false);
+            }
+            else if(backDestinationMap.get(tempPrompt.getIf_true()) != null){
+                if(isTrue){
+                    mPager.setCurrentItem(destination, false);
+                }
+                else{
+                    backDestinationMap.remove(tempPrompt.getIf_true());
+                    backDestinationMap.put(destination, mPager.getCurrentItem());
+                    mPager.setCurrentItem(destination, false);
+                }
+            }
+            else if(backDestinationMap.get(tempPrompt.getIf_false())!= null){
+                if(!isTrue){
+                    mPager.setCurrentItem(destination, false);
+                }
+                else{
+                    backDestinationMap.remove(tempPrompt.getIf_true());
+                    backDestinationMap.put(destination, mPager.getCurrentItem());
+                    mPager.setCurrentItem(destination, false);
+                }
+            }
 
         }
         else if(mPager.getCurrentItem()<mAllPrompts.size()-1) {
@@ -228,7 +265,7 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
         validateSaveList(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
         if(mPager.getCurrentItem()<mAllPrompts.size()-1){
-            mPager.setCurrentItem(mPager.getCurrentItem()+1,true );
+            mPager.setCurrentItem(mPager.getCurrentItem()+1,false );
 
         }
         else
@@ -247,11 +284,24 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     }
 
     @Override
-    public void onBackClick() {
+    public void onBackClick(int prevPos) {
         if(mPager.getCurrentItem() > 0) {
-            mPager.setCurrentItem(mPager.getCurrentItem()-1, true);
+            if(backDestinationMap.get(mPager.getCurrentItem()) != null){
+                int prev = backDestinationMap.get(mPager.getCurrentItem());
+                Log.d(TAG, "Back is"+prev);
+                mPager.setCurrentItem(prev, false);
+            }
+            else{
+                Log.d(TAG, String.valueOf(prevPos));
+                mPager.setCurrentItem(mPager.getCurrentItem()-1, false);
+            }
+
         }
-        else getParentFragmentManager().popBackStack();
+        else {
+            getActivity().onBackPressed();
+            NavHostFragment.findNavController(PromptFragment.this).popBackStack();
+            //getParentFragmentManager().popBackStack();
+        }
     }
 
 
@@ -272,6 +322,12 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
             ReportPromptTextChoices prompt;
             prompt = (ReportPromptTextChoices) mAllPrompts.get(pos);
             mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
+        }
+        else if(mAllPrompts.get(pos) instanceof ReportPromptOptional){
+            ReportPromptOptional prompt;
+            prompt = (ReportPromptOptional) mAllPrompts.get(pos);
+            mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
+
         }
         else
             Log.e(TAG, "error in adding report to viewmodel");
@@ -307,6 +363,5 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         showCount.setText(count.toString());
 
     }*/
-
 
 }

@@ -8,6 +8,7 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +21,7 @@ import android.widget.TextView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.AdminUserAdapter;
+import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment;
 
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,7 @@ import java.util.Map;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ManageUsersFragment extends Fragment implements AdminUserAdapter.OnUserListener, AddCookerFragment.AddCookerListener {
+public class ManageUsersFragment extends Fragment implements AdminUserAdapter.OnUserListener {
 
     private static final String TAG = /*this.getTag()*/ "ManageUsersFragment" ;
     private RecyclerView mRecyclerView;
@@ -75,8 +77,8 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
         mAddButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DialogFragment addCookerFragment = new AddCookerFragment(ManageUsersFragment.this);
-                addCookerFragment.show(getParentFragmentManager(), "addCooker");
+                NavHostFragment.findNavController(ManageUsersFragment.this).navigate(R.id.action_manageUsersFragment_to_addCookerFragment);
+
 
             }
         });
@@ -97,8 +99,5 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
 
     }
 
-    @Override
-    public void onDialogPositiveClick(String userTitle, String userEmail) {
-        mViewModel.addCookerUser(userTitle, userEmail);
-    }
+
 }

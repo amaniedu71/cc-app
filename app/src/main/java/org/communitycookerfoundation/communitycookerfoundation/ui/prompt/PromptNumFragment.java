@@ -38,6 +38,7 @@ public class PromptNumFragment extends Fragment {
     private static final String MIN_VAL = "min_val";
     private static final String HINT = "hint";
     private static final String CUR_POS = "cur_pos";
+    private static final String PREV_POS = "prev_pos";
     private static final String SIZE = "size";
     private final OnPromptBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
@@ -62,6 +63,7 @@ public class PromptNumFragment extends Fragment {
     private Button mNextBtn;
     private Button mCancelBtn;
     private int mPromptSize;
+    private int mPrevPos;
 
     public PromptNumFragment(OnPromptBtnClicked nextClicked) {
         mBtnClicked = nextClicked;
@@ -78,7 +80,7 @@ public class PromptNumFragment extends Fragment {
      * @return A new instance of fragment PromptTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PromptNumFragment createInstance(String question, String hint, int max_value, int min_value, int  position, OnPromptBtnClicked nextClicked, int isLast) {
+    public static PromptNumFragment createInstance(String question, String hint, int max_value, int min_value, int  position, OnPromptBtnClicked nextClicked, int isLast, int prev) {
         PromptNumFragment fragment = new PromptNumFragment(nextClicked);
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
@@ -87,6 +89,7 @@ public class PromptNumFragment extends Fragment {
         args.putInt(MIN_VAL, min_value);
         args.putInt(CUR_POS, position);
         args.putInt(SIZE, isLast);
+        args.putInt(PREV_POS, prev);
 
 
         fragment.setArguments(args);
@@ -103,6 +106,7 @@ public class PromptNumFragment extends Fragment {
             mMinValue = getArguments().getInt(MIN_VAL);
             mCurPos = getArguments().getInt(CUR_POS);
             mPromptSize = getArguments().getInt(SIZE);
+            mPrevPos = getArguments().getInt(PREV_POS);
 
         }
     }
@@ -123,7 +127,7 @@ public class PromptNumFragment extends Fragment {
         mEditText.setHint(mHint);
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
-        mInputEditLayout = view.findViewById(R.id.prompt_Layout1);
+        mInputEditLayout = view.findViewById(R.id.prompt_Layout);
         TextView currentNum = view.findViewById(R.id.currentPromptNum1);
         currentNum.setText(""+mCurPos);
         setProgressBar();
@@ -138,7 +142,7 @@ public class PromptNumFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = mEditText.getText().toString().trim();
-                validateText(text);
+             //   validateText(text);
                 //TODO: Update cache of responses after text changes
                 //TODO: sort out persistence
 
@@ -183,7 +187,7 @@ public class PromptNumFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                mBtnClicked.onBackClick(mPrevPos);
             }
 
 
@@ -230,7 +234,7 @@ public class PromptNumFragment extends Fragment {
 
     public  interface OnPromptBtnClicked {
          void onNextClick( String response);
-         void onBackClick();
+         void onBackClick(int prevPos);
     }
 
 }

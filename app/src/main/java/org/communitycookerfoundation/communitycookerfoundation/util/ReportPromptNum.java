@@ -16,13 +16,14 @@ public class ReportPromptNum extends ReportPrompt{
 
     }
 
-    public ReportPromptNum(String question, String input_type, String hint, int max_value, int min_value){
+    public ReportPromptNum(String question, String input_type, String hint, int max_value, int min_value, int question_id){
 
         this.question = question;
         this.input_type = input_type;
         this.hint = hint;
         this.max_value = max_value;
         this.min_value = min_value;
+        this.question_id = question_id;
 
     }
 
@@ -46,6 +47,11 @@ public class ReportPromptNum extends ReportPrompt{
 
     public int getMin_value() {
         return min_value;
+    }
+
+    @Override
+    public int getQuestion_id() {
+        return question_id;
     }
 
 }

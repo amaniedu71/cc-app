@@ -94,5 +94,13 @@
     <fragment
         android:id="@+id/manageUsersFragment"
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageUsersFragment"
-        android:label="ManageUsersFragment" />
+        android:label="ManageUsersFragment" >
+        <action
+            android:id="@+id/action_manageUsersFragment_to_addCookerFragment"
+            app:destination="@id/addCookerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addCookerFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.AddCookerFragment"
+        android:label="AddCookerFragment" />
 </navigation>

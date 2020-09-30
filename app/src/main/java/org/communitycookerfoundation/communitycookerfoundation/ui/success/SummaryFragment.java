@@ -22,8 +22,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.SummaryAdapter;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicReportEntity;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
-import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment;
 import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptViewModel;
 
 import java.util.List;
@@ -58,7 +56,7 @@ public class SummaryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerSummary = view.findViewById(R.id.summary_list);
         mEditText = view.findViewById(R.id.input_answer);
-        mInputEditLayout = view.findViewById(R.id.prompt_Layout1);
+        mInputEditLayout = view.findViewById(R.id.prompt_Layout);
         TextView currentNum = view.findViewById(R.id.currentPromptNum1);
         NavBackStackEntry navBackStackEntry  = NavHostFragment.findNavController(SummaryFragment.this).getBackStackEntry(R.id.nav_add_report);
         mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel.class);

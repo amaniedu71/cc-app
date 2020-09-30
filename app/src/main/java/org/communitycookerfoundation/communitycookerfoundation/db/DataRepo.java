@@ -432,8 +432,8 @@ public class DataRepo {
 
     private void getPromptsFb(){
 
-        mFirebaseDB.collection("report_dummy_set"/*report_set*/)
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+        mFirebaseDB.collection("report_set").document("basic_set").collection("report_prompts")
+                .orderBy("question_id").addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
                     public void onEvent(@Nullable QuerySnapshot value,
                                         @Nullable FirebaseFirestoreException e) {
@@ -483,7 +483,7 @@ public class DataRepo {
 
     }
 
-    public LiveData<List<ReportPrompt>> getTestPrompts() {
+   /* public LiveData<List<ReportPrompt>> getTestPrompts() {
 
         MutableLiveData<List<ReportPrompt>> mTestPrompts = new MutableLiveData<>();
         List<ReportPrompt> prompts = new ArrayList<>();
@@ -495,7 +495,7 @@ public class DataRepo {
         return mTestPrompts;
 
     }
-
+*/
     public void addUser(Map<String, String> cookerUser) {
         Map<String, Object> parentData = new HashMap<>();
         parentData.put("roles", cookerUser);

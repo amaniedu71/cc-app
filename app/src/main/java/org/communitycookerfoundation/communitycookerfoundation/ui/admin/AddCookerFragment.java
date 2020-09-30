@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
+import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -93,7 +95,7 @@ public class AddCookerFragment  extends Fragment implements DatePickerDialog.OnD
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(mEmailAddress.getText().toString()) && !TextUtils.isEmpty(mNamePerson.getText().toString())){
                     mViewModel.addCookerUser(mNamePerson.getText().toString(), mEmailAddress.getText().toString());
-
+                    NavHostFragment.findNavController(AddCookerFragment.this).popBackStack();
 
                 }
                 else {

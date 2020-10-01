@@ -23,11 +23,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/currentPromptPlaceholder"
-        app:layout_constraintBottom_toTopOf="@+id/textPrompt"
-        app:layout_constraintStart_toStartOf="@+id/textPrompt" />
+        app:layout_constraintBottom_toTopOf="@+id/calPromptText"
+        app:layout_constraintStart_toStartOf="@+id/calPromptText" />
 
     <TextView
-        android:id="@+id/textPrompt"
+        android:id="@+id/calPromptText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="50dp"
@@ -57,7 +57,7 @@
         app:layout_constraintBottom_toTopOf="@id/groupBtns"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textPrompt">
+        app:layout_constraintTop_toBottomOf="@+id/calPromptText">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/prompt_Layout"

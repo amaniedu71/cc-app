@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="bool_cond">
-        <item>True</item>
-        <item>False</item>
+        <item>Yes</item>
+        <item>No</item>
     </string-array>
 </resources>

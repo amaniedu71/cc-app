@@ -133,6 +133,7 @@ public class PromptCondFragment extends Fragment {
 // Apply the adapter to the spinner
         mSpinner.setAdapter(adapter);
 
+
         mQuestionView = view.findViewById(R.id.textPromptCond);
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
@@ -178,7 +179,8 @@ public class PromptCondFragment extends Fragment {
                 boolean boolChoice = false;
                 strChoice = (String) mSpinner.getSelectedItem();
                 if(strChoice !=null){
-                    boolChoice = strChoice.contains("True");
+                    boolChoice = strChoice.contains("Yes");
+
                 }
                 if(boolChoice){
                     mBtnClicked.onNextClick((String) mSpinner.getSelectedItem(), mIfTrue);

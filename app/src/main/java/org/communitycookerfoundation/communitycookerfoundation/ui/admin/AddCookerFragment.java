@@ -1,14 +1,9 @@
 package org.communitycookerfoundation.communitycookerfoundation.ui.admin;
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +22,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,6 +53,7 @@ public class AddCookerFragment  extends Fragment implements DatePickerDialog.OnD
         mNamePerson = view.findViewById(R.id.input_answer2);
         Button dateBtn = view.findViewById(R.id.open_cal);
         mEmailAddress = view.findViewById(R.id.input_email);
+        mCalendarText = getView().findViewById(R.id.textView);
         Button nextBtn = view.findViewById(R.id.next_btn);
         mViewModel = new ViewModelProvider(this).get(AddCookerViewModel.class);
         dateBtn.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +109,7 @@ public class AddCookerFragment  extends Fragment implements DatePickerDialog.OnD
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-        mCalendarText = getView().findViewById(R.id.textPrompt);
+
         String text = dayOfMonth+"/"+month+"/"+year;
         mCalendarText.setText(text);
 

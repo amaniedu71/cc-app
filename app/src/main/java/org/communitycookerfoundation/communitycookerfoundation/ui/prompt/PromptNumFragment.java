@@ -121,7 +121,7 @@ public class PromptNumFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mQuestionView = view.findViewById(R.id.textPrompt);
+        mQuestionView = view.findViewById(R.id.calPromptText);
         mEditText = view.findViewById(R.id.input_answer);
         mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
         mEditText.setHint(mHint);

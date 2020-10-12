@@ -27,7 +27,7 @@ import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptV
 import java.util.List;
 
 
-public class SummaryFragment extends Fragment {
+public class SummaryFragment extends Fragment implements SummaryAdapter.OnSummaryListener {
     TextView showCount;
     private TextInputEditText mEditText;
     private TextInputLayout mInputEditLayout;
@@ -61,7 +61,7 @@ public class SummaryFragment extends Fragment {
         NavBackStackEntry navBackStackEntry  = NavHostFragment.findNavController(SummaryFragment.this).getBackStackEntry(R.id.nav_add_report);
         mViewModel = new ViewModelProvider(navBackStackEntry).get(PromptViewModel.class);
         //currentNum.setText(CURRENT_PROMPT + "/" + TOTAL_PROMPTS);
-        mRecyclerAdapter = new SummaryAdapter(getContext());
+        mRecyclerAdapter = new SummaryAdapter(this);
         mRecyclerSummary.setAdapter(mRecyclerAdapter);
         mRecyclerSummary.setLayoutManager(new LinearLayoutManager(this.getContext()));
         mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<List<BasicReportEntity>>() {
@@ -110,6 +110,8 @@ public class SummaryFragment extends Fragment {
     }
 
 
+    @Override
+    public void onReportListClick(int reportId) {
 
-
+    }
 }

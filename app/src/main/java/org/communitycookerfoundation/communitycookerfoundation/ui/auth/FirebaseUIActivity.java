@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthMethodPickerLayout;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -29,7 +30,12 @@ public class FirebaseUIActivity extends AppCompatActivity {
     private static final String TAG = "UNKNOWN_ERROR";
 
     FirebaseAuth mAuth;
-
+    AuthMethodPickerLayout customLayout = new AuthMethodPickerLayout
+            .Builder(R.layout.activity_firebase_ui)
+            .setPhoneButtonId(R.id.phone_button)
+            .setEmailButtonId(R.id.email_button)
+            //.setTosAndPrivacyPolicyId(R.id.baz)
+            .build();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +49,8 @@ public class FirebaseUIActivity extends AppCompatActivity {
             // not signed in
         }
     }
+
+
 
     private void startSignedInActivity() {
         Intent intent  = new Intent(FirebaseUIActivity.this, MainActivity.class);
@@ -64,6 +72,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setAuthMethodPickerLayout(customLayout)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]

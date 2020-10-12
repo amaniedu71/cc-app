@@ -1,6 +1,5 @@
 package org.communitycookerfoundation.communitycookerfoundation.adapters;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,10 @@ import java.util.List;
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
     private List<BasicReportEntity> mFields; //cached copy
+    private OnSummaryListener mOnSummaryListener;
 
-    public SummaryAdapter(Context context){
+    public SummaryAdapter(OnSummaryListener onSummaryListener){
+        mOnSummaryListener = onSummaryListener;
 
     }
 
@@ -68,6 +69,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     public class SummaryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView prompt1ItemView;
         public final TextView response1ItemView;
+        View mParentGroup;
 
         public SummaryViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,16 +77,17 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             this.response1ItemView = itemView.findViewById(R.id.response1_summary);
             itemView.setOnClickListener(this);
 
+
         }
 
         @Override
         public void onClick(View view) {
-
+        mOnSummaryListener.onReportListClick(getAdapterPosition());
 
 
         }
     }
-    public interface OnSumaryListener {
+    public interface OnSummaryListener {
 
         void onReportListClick(int reportId);
 

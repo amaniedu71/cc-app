@@ -158,9 +158,15 @@ public class PromptTextChoicesFragment extends Fragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequenc s, int start, int before, int count) {
                 String text = mEditText.getText().toString().trim();
                 validateText(text);
+
+
+
+
+
+
                 //TODO: Update cache of responses after text changes
                 //TODO: sort out persistence
 

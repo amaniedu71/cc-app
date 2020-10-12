@@ -24,7 +24,7 @@
     <string name="promptText1">"How many liters of water have you used today? "</string>
     <string name="add_report">Complete Daily Record</string>
     <string name="toast_empty_string">Please add a value!</string>
-    <string name="prompt1">Prompt1</string>
+    <string name="prompt1">Daily Reporting</string>
     <string name="welcome_message">Hello</string>
     <string name="refresh_reports">Refresh</string>
 

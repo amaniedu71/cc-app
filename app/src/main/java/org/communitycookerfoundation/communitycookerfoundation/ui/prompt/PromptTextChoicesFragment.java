@@ -137,7 +137,7 @@ public class PromptTextChoicesFragment extends Fragment {
              adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, mOptions );
         else
             adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, defaultItem );
-
+        adapter.add("None of the above");
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner
@@ -158,9 +158,15 @@ public class PromptTextChoicesFragment extends Fragment {
             }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            public void onTextChanged(CharSequenc s, int start, int before, int count) {
                 String text = mEditText.getText().toString().trim();
                 validateText(text);
+
+
+
+
+
+
                 //TODO: Update cache of responses after text changes
                 //TODO: sort out persistence
 

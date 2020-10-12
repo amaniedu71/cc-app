@@ -75,6 +75,7 @@ public class PromptOptionalFragment extends Fragment {
     private int mPromptSize;
     private CheckBox mCheckBox;
     private int mPrevPos;
+    private CheckBox checkBox;
 
 
     public PromptOptionalFragment(List<String> options, OnPromptOptionalBtnClicked nextClicked) {
@@ -132,14 +133,26 @@ public class PromptOptionalFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         LinearLayout layout = view.findViewById(R.id.linearLayout);
 
-        for(int ind= 0; ind <mOptions.size(); ind++ ){
-            String option = mOptions.get(ind);
-            CheckBox checkBox = new CheckBox(this.getContext());
-            checkBox.setText(option);
-            checkBox.setId(ind);
-            layout.addView(checkBox);
+        for(int ind= 0; ind <=mOptions.size(); ind++ ){
+
+            if(ind != mOptions.size()){
+                String option = mOptions.get(ind);
+                CheckBox checkBox = new CheckBox(this.getContext());
+                checkBox.setText(option);
+                checkBox.setId(ind);
+                layout.addView(checkBox);
+            }
+            else{
+
+                String option = "None of the above";
+                CheckBox checkBox = new CheckBox(this.getContext());
+                checkBox.setText(option);
+                checkBox.setId(ind);
+                layout.addView(checkBox);
+            }
 
         }
+
         mQuestionView = view.findViewById(R.id.textPromptOptional);
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);

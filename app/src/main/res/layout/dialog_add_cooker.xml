@@ -224,12 +224,12 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
-            android:id="@+id/textPrompt"
+            android:id="@+id/calPromptText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:text="Calendar year constructed"
+            android:text="Date Cooker was constructed"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/prompt_Layout5" />
@@ -244,7 +244,7 @@
             android:layout_marginTop="16dp"
             android:text="open calendar"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textPrompt" />
+            app:layout_constraintTop_toBottomOf="@+id/calPromptText" />
 
         <TextView
             android:id="@+id/textView"

@@ -24,12 +24,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:text="TextView"
-            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:layout_marginTop="24dp"
+            android:text="Review your responses below"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Review your responses!" />
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -69,12 +69,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
                     android:layout_margin="10dp"
+                    android:background="#4CAF50"
                     android:elevation="3dp"
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:stateListAnimator="@null"
                     android:text="Finish"
                     android:textColor="#FFF"
+                    android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"

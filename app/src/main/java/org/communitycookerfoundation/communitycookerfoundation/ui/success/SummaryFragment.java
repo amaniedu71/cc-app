@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,9 +23,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.SummaryAdapter;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragmentDirections;
 import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptViewModel;
 
 import java.util.List;
+import java.util.Map;
 
 
 public class SummaryFragment extends Fragment implements SummaryAdapter.OnSummaryListener {
@@ -64,15 +67,13 @@ public class SummaryFragment extends Fragment implements SummaryAdapter.OnSummar
         mRecyclerAdapter = new SummaryAdapter(this);
         mRecyclerSummary.setAdapter(mRecyclerAdapter);
         mRecyclerSummary.setLayoutManager(new LinearLayoutManager(this.getContext()));
-        mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<List<BasicReportEntity>>() {
-            @Override
-            public void onChanged(List<BasicReportEntity> reportEntity) {
-
-                mRecyclerAdapter.setFields(reportEntity);
-
-            }
-        });
-        mRecyclerSummary.setNestedScrollingEnabled(false);
+        mViewModel.getReports().observe(getViewLifecycleOwner(), new Observer<Map<Integer, BasicReportEntity>>() {
+                    @Override
+                    public void onChanged(Map<Integer, BasicReportEntity> integerBasicReportEntityMap) {
+                        mRecyclerAdapter.setFields(integerBasicReportEntityMap);
+                    }
+                });
+                mRecyclerSummary.setNestedScrollingEnabled(false);
         Button onFinish = view.findViewById(R.id.finish_btn);
         onFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +113,8 @@ public class SummaryFragment extends Fragment implements SummaryAdapter.OnSummar
 
     @Override
     public void onReportListClick(int reportId) {
-
+        SummaryFragmentDirections.ActionSummaryFragmentToNavPrompt action = SummaryFragmentDirections.actionSummaryFragmentToNavPrompt();
+        action.setRetArgument(reportId);
+        NavHostFragment.findNavController(SummaryFragment.this).navigate(action);
     }
 }

@@ -96,6 +96,7 @@ public class PromptOptionalFragment extends Fragment {
     public static PromptOptionalFragment createInstance(String question, List<String> options, int position, OnPromptOptionalBtnClicked nextClicked, int isLast, int prev) {
         PromptOptionalFragment fragment = new PromptOptionalFragment(options, nextClicked);
         Bundle args = new Bundle();
+       // args.putParcelableArrayList("Hello", options); TODO: for rotation purpose impliment Parsable wrapper
         args.putString(QUESTION, question);
         //  args.putString(HINT, hint);
         args.putInt(CUR_POS, position);
@@ -157,6 +158,7 @@ public class PromptOptionalFragment extends Fragment {
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
         TextView currentNum = view.findViewById(R.id.currentPromptOptional);
+        mCurPos+=1;
         currentNum.setText(""+mCurPos);
         setProgressBar();
      /*   mEditText.addTextChangedListener(new TextWatcher() {
@@ -209,9 +211,8 @@ public class PromptOptionalFragment extends Fragment {
                     mBtnClicked.onNextClick(checked);
                 }
                 else{
-                    ArrayList<String> unchecked = new ArrayList<>();
-                    unchecked.add("NONE");
-                    mBtnClicked.onNextClick(unchecked);
+                    Toast myToast = Toast.makeText(getContext(), R.string.toast_empty_string, Toast.LENGTH_SHORT);
+                    myToast.show();
                 }
             }
         });

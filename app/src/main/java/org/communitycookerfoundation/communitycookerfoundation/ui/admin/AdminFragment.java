@@ -78,6 +78,7 @@ public class AdminFragment extends Fragment implements AdminHomeChoiceAdapter.On
                 }
                 count = count+4;
             }
+
         });*/
 
 
@@ -97,7 +98,7 @@ public class AdminFragment extends Fragment implements AdminHomeChoiceAdapter.On
         }
         else if(position == 1){
             Log.d(TAG, "CLICKED MANAGE REPORTS");
-            NavHostFragment.findNavController(AdminFragment.this).navigate(R.id.action_adminFragment_to_manageReportsFragment);
+            NavHostFragment.findNavController(AdminFragment.this).navigate(R.id.action_adminFragment_to_manageReportsFragment2);
 
 
         }

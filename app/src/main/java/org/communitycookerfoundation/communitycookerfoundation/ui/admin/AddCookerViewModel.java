@@ -58,7 +58,10 @@ public class AddCookerViewModel extends AndroidViewModel {
 
     public void addCookerUser(String userTitle, String userEmail) {
         Map<String, String> cookerUser = new HashMap<>();
-        cookerUser.put(userEmail, "admin");
+        cookerUser.put("name", userTitle);
+        cookerUser.put("email", userEmail);
+        cookerUser.put("role", "user");
+
         mRepo.addUser(cookerUser);
 
     }

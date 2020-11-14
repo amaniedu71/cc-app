@@ -10,63 +10,76 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class UserReportListAdapter extends RecyclerView.Adapter<UserReportListAdapter.ReportViewHolder> {
 
-    private List<ReportEntity> mReports; //cached copy
+
+    private HashMap<String,Object> mCurrentReport;
 
     public UserReportListAdapter(Context context){
-
-
     }
 
 
     @NonNull
     @Override
     public ReportViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
+        View itemView =  LayoutInflater.from(parent.getContext()).inflate(R.layout.user_item, parent, false);
         return new ReportViewHolder(itemView);
+    }
+
+    public void setReports(HashMap<String, Object> currentReport){
+        if(currentReport != null) currentReport.remove("report_date");
+        mCurrentReport = currentReport;
+        notifyDataSetChanged();
     }
 
     @Override
     public void onBindViewHolder(@NonNull ReportViewHolder holder, int position) {
-        if(mReports!= null){
+        if(mCurrentReport!= null && mCurrentReport.keySet().size()>0){
 
-            ReportEntity current = mReports.get(position);
-            holder.reportItemView.setText(current.getResponse());
+            List<String> key = new ArrayList<>(mCurrentReport.keySet());
+            int questionNumber = position+1;
+            String heading = "Question " + questionNumber;
+            String prompt = key.get(position);
+            String response = (String) mCurrentReport.get(prompt);
+            holder.reportHeading.setText(heading);
+            holder.responseText.setText(response);
+            holder.promptText.setText(prompt);
+
 
         }
         else
-            holder.reportItemView.setText("No reports added yet");
+            holder.reportHeading.setText("No reports submitted! ");
 
-    }
-
-    public void setReports(List<ReportEntity> reports){
-
-        mReports = reports;
-        notifyDataSetChanged();
 
     }
     @Override
     public int getItemCount() {
-        if(mReports != null)
-            return mReports.size();
+        if(mCurrentReport != null)
+            return mCurrentReport.keySet().size();
         else
             return 1;
     }
 
     public static class ReportViewHolder extends RecyclerView.ViewHolder {
-        public final TextView reportItemView;
-
+        public final TextView reportHeading;
+        public final TextView promptText;
+        public final TextView responseText;
 
 
         public ReportViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.reportItemView = itemView.findViewById(R.id.recycler_text1);
+            this.reportHeading = itemView.findViewById(R.id.report_heading);
+            this.promptText = itemView.findViewById(R.id.prompt1_text);
+            this.responseText = itemView.findViewById(R.id.resp1_text);
         }
+
     }
+
 }

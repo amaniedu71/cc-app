@@ -109,7 +109,7 @@ public class AddCookerFragment  extends Fragment implements DatePickerDialog.OnD
 
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-
+        ++month; //month starts from 0 for some reason
         String text = dayOfMonth+"/"+month+"/"+year;
         mCalendarText.setText(text);
 

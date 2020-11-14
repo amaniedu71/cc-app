@@ -22,6 +22,7 @@ import org.communitycookerfoundation.communitycookerfoundation.MainActivity;
 import org.communitycookerfoundation.communitycookerfoundation.R;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
@@ -32,7 +33,6 @@ public class FirebaseUIActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     AuthMethodPickerLayout customLayout = new AuthMethodPickerLayout
             .Builder(R.layout.activity_firebase_ui)
-            .setPhoneButtonId(R.id.phone_button)
             .setEmailButtonId(R.id.email_button)
             //.setTosAndPrivacyPolicyId(R.id.baz)
             .build();
@@ -63,9 +63,8 @@ public class FirebaseUIActivity extends AppCompatActivity {
     public void createSignInIntent() {
         // [START auth_fui_create_intent]
         // Choose authentication providers
-        List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.PhoneBuilder().build());
+        List<AuthUI.IdpConfig> providers = Collections.singletonList(
+                new AuthUI.IdpConfig.EmailBuilder().build());
 
         // Create and launch sign-in intent
         startActivityForResult(

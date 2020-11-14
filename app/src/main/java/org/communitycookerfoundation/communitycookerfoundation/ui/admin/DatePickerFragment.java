@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 import java.util.Calendar;
 
 public  class DatePickerFragment extends DialogFragment
-        implements DatePickerDialog.OnDateSetListener {
+         {
 
     private final AddCookerFragment onDateSetListener;
 
@@ -31,7 +31,4 @@ public  class DatePickerFragment extends DialogFragment
         return new DatePickerDialog(getActivity(), onDateSetListener, year, month, day);
     }
 
-    public void onDateSet(DatePicker view, int year, int month, int day) {
-        // Do something with the date chosen by the user
-    }
 }

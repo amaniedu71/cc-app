@@ -8,24 +8,28 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavBackStackEntry;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
-import org.communitycookerfoundation.communitycookerfoundation.adapters.AdminReportAdapter;
+import org.communitycookerfoundation.communitycookerfoundation.adapters.ReportListAdapter;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UserAccount extends Fragment {
+public class UserAccount extends Fragment implements ReportListAdapter.OnReportClickListener {
     public final static String TAG = "UserAccount";
-    private UserAccountViewModel mViewModel;
+    private UserViewModel mViewModel;
     private String mCurrentUserUID;
-    private AdminReportAdapter mAdminReportAdapter;
+    private ReportListAdapter mReportListAdapter;
     private RecyclerView mRecycler;
 
     public static UserAccount newInstance() {
@@ -35,29 +39,29 @@ public class UserAccount extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.user_fragment, container, false);
+        return inflater.inflate(R.layout.single_recyclerview_layout, container, false);
     }
 
     @Override
     public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mViewModel =  new ViewModelProvider(this).get(UserAccountViewModel.class);
+        mViewModel = new ViewModelProvider(UserAccount.this).get(UserViewModel.class);
+
         mCurrentUserUID = UserAccountArgs.fromBundle(getArguments()).getUserPosition();
         mRecycler = view.findViewById(R.id.userRecycler);
-        mAdminReportAdapter = new AdminReportAdapter(getContext());
+        mReportListAdapter = new ReportListAdapter(this);
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
-        mRecycler.setAdapter(mAdminReportAdapter);
+        mRecycler.setAdapter(mReportListAdapter);
         mViewModel.getUserReports(mCurrentUserUID).observe(this.getViewLifecycleOwner(), new Observer<List<Map<String, Object>>>() {
             @Override
             public void onChanged(List<Map<String, Object>> reports) {
                 if(reports.size()>0){
-                    mAdminReportAdapter.setReports(reports);
-                    /*
+                    mReportListAdapter.setReports(reports);
                     for(Map<String, Object> tempMap: reports){
                         for(String keys:tempMap.keySet()){
                             Log.d(TAG, "We got something: "+ keys);
                         }
-                    }*/
+                    }
 
 
                 }
@@ -68,5 +72,14 @@ public class UserAccount extends Fragment {
     }
 
 
-
+    @Override
+    public void onReportClick(Map<String, Object> chosenReport) {
+        /*
+        ManageReportsFragmentDirections.ActionManageReportsFragmentToUserAccount action = ManageReportsFragmentDirections.actionManageReportsFragmentToUserAccount(userUID);
+        NavHostFragment.findNavController(ManageReportsFragment.this).navigate(action);
+         */
+        UserAccountDirections.ActionUserAccountToUserReportListFragment action = UserAccountDirections.actionUserAccountToUserReportListFragment((HashMap<String,Object>)chosenReport);
+        NavHostFragment.findNavController(UserAccount.this).navigate(action);
+    }
 }
+

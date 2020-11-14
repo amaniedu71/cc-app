@@ -42,7 +42,7 @@ public class PromptCondFragment extends Fragment {
     private static final String CUR_POS = "cur_pos";
     private static final String PREV_POS = "prev_pos";
     private static final String SIZE = "size";
-    private final OnPromptCondBtnClicked mBtnClicked;
+    private OnPromptCondBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
     public static final int NEXT_CLICKED = 1;
     // TODO: Rename and change types of parameters
@@ -70,10 +70,12 @@ public class PromptCondFragment extends Fragment {
     private int mIfTrue;
     private int mPrevPos;
 
-    public PromptCondFragment(OnPromptCondBtnClicked nextClicked) {
-        mBtnClicked = nextClicked;
 
-        // Required empty public constructor
+
+
+    public PromptCondFragment() {
+
+
     }
 
     /**
@@ -85,7 +87,7 @@ public class PromptCondFragment extends Fragment {
      */
     // TODO: Rename and change types and number of parameters
     public static PromptCondFragment createInstance(String question, int if_false, int if_true, int  position, OnPromptCondBtnClicked nextClicked, int isLast, int prev) {
-        PromptCondFragment fragment = new PromptCondFragment(nextClicked);
+        PromptCondFragment fragment = new PromptCondFragment();
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
       //  args.putString(HINT, hint);
@@ -102,6 +104,8 @@ public class PromptCondFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mBtnClicked = (OnPromptCondBtnClicked) this.getParentFragment();
+
         if (getArguments() != null) {
             mQuestionText = getArguments().getString(QUESTION);
             //mHint = getArguments().getString(HINT);
@@ -138,6 +142,8 @@ public class PromptCondFragment extends Fragment {
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
         TextView currentNum = view.findViewById(R.id.currentPromptCond);
+        mCurPos +=1;
+
         currentNum.setText(""+mCurPos);
         setProgressBar();
      /*   mEditText.addTextChangedListener(new TextWatcher() {

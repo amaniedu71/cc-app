@@ -48,6 +48,11 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     private FragmentStateAdapter mPromptAdapter;
     private int mPrevPos;
     Map<Integer, Integer> backDestinationMap = new HashMap<Integer, Integer>();
+    private int mPosFromSum;
+    private List<Integer> mConditonalQuestions = new ArrayList<>();
+    private int mPosToJump = 0;
+    private boolean isJumped = false;
+    private int mLastPos;
 
     @Override
     public View onCreateView(
@@ -68,10 +73,19 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
 
         super.onViewCreated(view, savedInstanceState);
         mPrevPos = -1;
+        mPosFromSum = PromptFragmentArgs.fromBundle(getArguments()).getRetArgument();
+
+
+
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
-                if(mPager.getCurrentItem() > 0) {
+                if(isJumped&&mPager.getCurrentItem() == mConditonalQuestions.get(mPosToJump))
+                    navToSummary();
+
+                else if(mPager.getCurrentItem() > 0) {
+
                     if(backDestinationMap.get(mPager.getCurrentItem()) != null){
                         int prev = backDestinationMap.get(mPager.getCurrentItem());
                         Log.d(TAG, "Back is"+prev);
@@ -100,12 +114,15 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         mViewModel.getReportPrompts().observe(this.getViewLifecycleOwner(), new Observer<List<ReportPrompt>>() {
             @Override
             public void onChanged(List<ReportPrompt> reportPrompts) {
+                setViewPager(reportPrompts);
 
-                mAllPrompts = reportPrompts;
-                mPromptAdapter.notifyDataSetChanged();
 
             }
         });
+
+
+
+
 
 
 
@@ -165,6 +182,44 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         });*/
     }
 
+    private void setViewPager(List<ReportPrompt> reportPrompts) {
+
+        if(reportPrompts.size()>0){
+            for(int i = 0; i<reportPrompts.size(); i++){
+                if(reportPrompts.get(i).getInput_type().contains("conditional_bool")){
+                    mConditonalQuestions.add(i);
+                }
+            }
+        }
+        else{
+            mConditonalQuestions.add(0);
+        }
+        if(mPosFromSum >-1){
+
+            for(int i = 0; i<mConditonalQuestions.size(); i++){
+
+                if (mPosFromSum <= mConditonalQuestions.get(i)) {
+                    isJumped = true;
+                    if(mPosFromSum == mConditonalQuestions.get(i)) mPosToJump = i;
+                    else mPosToJump = i-1;
+                    break;
+                }
+
+            }
+            if(mPosToJump == mConditonalQuestions.size()-1)
+                mLastPos = mConditonalQuestions.get(mPosToJump);
+            else mLastPos = mConditonalQuestions.get(mPosToJump+1) -1;
+        }
+
+        mAllPrompts = reportPrompts;
+        mPromptAdapter.notifyDataSetChanged();
+        if(isJumped) {
+            mPager.setCurrentItem(mConditonalQuestions.get(mPosToJump), false);
+            Log.d(TAG, "I RAN THIS: "+mPosToJump);
+        }
+        Log.d(TAG, "IT IS: "+mPager.getCurrentItem());
+    }
+
     public FragmentStateAdapter getPromptAdapter() {
 
         return new FragmentStateAdapter(this) {
@@ -203,13 +258,16 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
 
     @Override
     public void onNextClick( String response) {
-        //curPos += 1; 
+        //curPos += 1;
         ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
         validateSave(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
-        if(mPager.getCurrentItem()<mAllPrompts.size()-1){
+
+        if (isJumped && mPager.getCurrentItem() == mLastPos) {
+            navToSummary();
+        }
+        else if(mPager.getCurrentItem()<mAllPrompts.size()-1){
            // mPrevPos = mPager.getCurrentItem() -1;
             mPager.setCurrentItem(mPager.getCurrentItem()+1,true );
-
         }
         else
             navToSummary();
@@ -219,8 +277,13 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
 
     @Override
     public void onNextClick(String response, int destination) {
+
         validateSave(mPager.getCurrentItem(),response, "text_choices");
-        if(destination<mAllPrompts.size()){
+
+        if (isJumped && destination > mLastPos) {
+            navToSummary();
+        }
+        else if(destination<mAllPrompts.size()){
             ReportPromptCond tempPrompt = (ReportPromptCond) mAllPrompts.get(mPager.getCurrentItem());
             boolean isTrue= tempPrompt.getIf_true() == destination;
             if(backDestinationMap.get(tempPrompt.getIf_false()) == null && backDestinationMap.get(tempPrompt.getIf_true()) == null){
@@ -264,7 +327,12 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
     public void onNextClick(List<String> response) {
         ReportPrompt reportPrompt = mAllPrompts.get(mPager.getCurrentItem());
         validateSaveList(mPager.getCurrentItem(), response, reportPrompt.getInput_type());
-        if(mPager.getCurrentItem()<mAllPrompts.size()-1){
+
+        if (isJumped && mPager.getCurrentItem() == mLastPos) {
+            navToSummary();
+        }
+
+        else if(mPager.getCurrentItem()<mAllPrompts.size()-1){
             mPager.setCurrentItem(mPager.getCurrentItem()+1,false );
 
         }
@@ -285,7 +353,10 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
 
     @Override
     public void onBackClick(int prevPos) {
-        if(mPager.getCurrentItem() > 0) {
+        if(isJumped&&mPager.getCurrentItem() == mConditonalQuestions.get(mPosToJump))
+            navToSummary();
+        else if(mPager.getCurrentItem() > 0) {
+
             if(backDestinationMap.get(mPager.getCurrentItem()) != null){
                 int prev = backDestinationMap.get(mPager.getCurrentItem());
                 Log.d(TAG, "Back is"+prev);
@@ -313,12 +384,12 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
             prompt = (ReportPromptNum) mAllPrompts.get(pos);
             mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
         }
-        if(mAllPrompts.get(pos) instanceof ReportPromptCond){
+        else if(mAllPrompts.get(pos) instanceof ReportPromptCond){
             ReportPromptCond prompt;
             prompt = (ReportPromptCond) mAllPrompts.get(pos);
             mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);
         }
-        if(mAllPrompts.get(pos) instanceof ReportPromptTextChoices){
+        else if(mAllPrompts.get(pos) instanceof ReportPromptTextChoices){
             ReportPromptTextChoices prompt;
             prompt = (ReportPromptTextChoices) mAllPrompts.get(pos);
             mViewModel.addReport(new ReportEntity(prompt.getQuestion(),response), pos);

@@ -134,8 +134,8 @@ public class DataRepo {
        // mUserDao.getCount().removeObserver();
 
 
-        //DocumentReference currentUser = mFirebaseDB.collection("users").document(mUserId);
-        /*currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        DocumentReference currentUser = mFirebaseDB.collection("users").document(mUserId);
+        currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
           @Override
           public void onComplete(@NonNull Task<DocumentSnapshot> task) {
               if (task.isSuccessful()) {
@@ -144,13 +144,13 @@ public class DataRepo {
                       Log.w(TAG, "Document exists!");
                   } else {
                       Log.w(TAG, "Document does not exist!");
-                      checkAdminFb();
+                      //checkAdminFb();
                       generateUser();
                   }
 
               }
             }
-        });*/
+        });
 
     }
 
@@ -192,16 +192,16 @@ public class DataRepo {
                 });
 
         //Database Logic
-        if (mIsAdmin != null) {
-            UserDB.databaseWriteExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    mUserDao.insert(new UserEntity(mFirebaseUser.getDisplayName(), mFirebaseUser.getUid(), mIsAdmin.getValue()));
-                }
-            });
-
-
-        }
+//        if (mIsAdmin != null) {
+//            UserDB.databaseWriteExecutor.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mUserDao.insert(new UserEntity(mFirebaseUser.getDisplayName(), mFirebaseUser.getUid(), mIsAdmin.getValue()));
+//                }
+//            });
+//
+//
+//        }
     }
 
 
@@ -225,25 +225,32 @@ public class DataRepo {
             Map<String, Object> reportToInsert = new HashMap<>();
             if(report instanceof ReportEntity ) {
                 ReportEntity entity = (ReportEntity) report;
-                reportToInsert.put("report_prompt", entity.getPrompt());
-                reportToInsert.put("report_response", entity.getResponse());
+                //reportToInsert.put("report_prompt", entity.getPrompt());
+                reportToInsert.put(entity.getPrompt(), entity.getResponse());
                 // reportToInsert.put("report_date", curDate);
+//                Log.d(TAG, "Inserting: "+ reportToInsert.keySet());
                 listToInsert.add(reportToInsert);
             }
             else if(report instanceof ReportListEntity) {
                 ReportListEntity entity = (ReportListEntity) report;
-                reportToInsert.put("report_prompt", entity.getPrompt());
-                reportToInsert.put("report_response", entity.getResponses());
+                //reportToInsert.put("report_prompt", entity.getPrompt());
+                reportToInsert.put(entity.getPrompt(), entity.getResponses());
                 // reportToInsert.put("report_date", curDate);
+//                Log.d(TAG, "Inserting: "+ reportToInsert.keySet());
                 listToInsert.add(reportToInsert);
 
             }
         }
+
+
+        /*for (Map<String,Object> test: listToInsert){
+            Log.d(TAG, "Inserting: " + test.keySet());
+        }*/
         for(int ind = 0; ind<listToInsert.size(); ind++) {
             Map<String, Object> reportToInsert = listToInsert.get(ind);
             mFirebaseDB.collection(("users")).document(mUserId).collection("user_reports")
                     .document(curDate)
-                    .collection("responses").document("response_"+ind).set(reportToInsert)
+                    .set(reportToInsert, SetOptions.merge())
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
@@ -321,9 +328,10 @@ public class DataRepo {
     }
 
     public void clearObservedData() {
-  //      mUserEntity.removeObserver(mObserveUserDB);
-
+  //      mUserEntity.removeObserver(mObserveUserDB)
     }
+
+
 
     public MutableLiveData<List<Map<String, Object>>> getAllUsers() {
         refreshUserList();
@@ -332,7 +340,9 @@ public class DataRepo {
 
     public void refreshUserList() {
         final List<Map<String,Object>> tempDocStorage = new ArrayList<Map<String, Object>>();
+
         mFirebaseDB.collection("users")
+                .orderBy("name")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -366,18 +376,20 @@ public class DataRepo {
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             List<Map<String, Object>> tempDocStorage = new ArrayList<>();
+                            int index = 0;
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Log.d(TAG, "HERE IT IS "+ document.getId() + " => " + document.getData());
                                 tempDocStorage.add(document.getData());
-                                mUserReports.setValue(tempDocStorage);
-
+                                tempDocStorage.get(index).put("report_date", document.getId());
+                                index++;
                             }
-                            mUserList.setValue(tempDocStorage);
-                            for (Map<String, Object> testMap : tempDocStorage){
+                            mUserReports.setValue(tempDocStorage);
+
+                         /*   for (Map<String, Object> testMap : tempDocStorage){
                                 for (String key: testMap.keySet()){
                                     Log.d(TAG, "KEY: "+ key + " VALUE: "+ testMap.get(key) );
                                 }
-                            }
+                            }*/
 
                             //Log.d(TAG, "STORED: " +  tempDocStorage.get(0).get("name"));
                         } else {
@@ -498,7 +510,10 @@ public class DataRepo {
 */
     public void addUser(Map<String, String> cookerUser) {
         Map<String, Object> parentData = new HashMap<>();
-        parentData.put("roles", cookerUser);
+        Map<String, String> tempData = new HashMap<>();
+        tempData.put(cookerUser.get("email"), cookerUser.get("role"));
+        parentData.put("roles", tempData);
+        //String[] arr = (String[]) cookerUser.keySet().toArray();
         // Add a new document with a generated ID
         mFirebaseDB.collection("private_data").document("access_list")
                 .set(parentData, SetOptions.merge())
@@ -512,6 +527,22 @@ public class DataRepo {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w(TAG, "Error adding document", e);
+                    }
+                });
+        mFirebaseDB.collection("private_data").document("user_info")
+                .collection("users")
+                .document(cookerUser.get("name"))
+                .set(cookerUser)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "User Info Added!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error adding user info", e);
                     }
                 });
 

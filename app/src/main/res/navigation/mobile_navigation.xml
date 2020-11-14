@@ -31,12 +31,13 @@
             android:label="@string/prompt1"
             tools:layout="@layout/fragment_prompt_viewpager">
 
-            <argument
-                android:name="myArg"
-                app:argType="string" />
             <action
                 android:id="@+id/action_nav_prompt_to_summaryFragment"
                 app:destination="@id/summaryFragment" />
+            <argument
+                android:name="retArgument"
+                app:argType="integer"
+                android:defaultValue="-1" />
         </fragment>
         <fragment
             android:id="@+id/nav_slideshow"
@@ -52,55 +53,67 @@
         <fragment
             android:id="@+id/summaryFragment"
             android:name="org.communitycookerfoundation.communitycookerfoundation.ui.success.SummaryFragment"
-            android:label="fragment_summary_list"
+            android:label="@string/summary_frag"
             tools:layout="@layout/fragment_summary_list" >
             <action
                 android:id="@+id/action_summaryFragment_to_nav_slideshow"
                 app:destination="@id/nav_slideshow" />
+            <action
+                android:id="@+id/action_summaryFragment_to_nav_prompt"
+                app:destination="@id/nav_prompt" />
         </fragment>
     </navigation>
     <fragment
         android:id="@+id/adminFragment"
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.AdminFragment"
-        android:label="admin_fragment"
+        android:label="Home"
         tools:layout="@layout/admin_fragment" >
-        <action
-            android:id="@+id/action_adminFragment_to_manageReportsFragment"
-            app:destination="@id/manageReportsFragment" />
         <action
             android:id="@+id/action_adminFragment_to_manageUsersFragment"
             app:destination="@id/manageUsersFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/userAccount"
-        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.UserAccount"
-        android:label="user_account_fragment"
-        tools:layout="@layout/user_fragment" >
-        <argument
-            android:name="userPosition"
-            app:argType="string" />
         <action
-            android:id="@+id/action_userAccount_to_manageReportsFragment"
-            app:destination="@id/manageReportsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/manageReportsFragment"
-        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageReportsFragment"
-        android:label="ManageReportsFragment" >
-        <action
-            android:id="@+id/action_manageReportsFragment_to_userAccount"
-            app:destination="@id/userAccount" />
+            android:id="@+id/action_adminFragment_to_manageReportsFragment2"
+            app:destination="@id/manageReportsFragment2" />
     </fragment>
     <fragment
         android:id="@+id/manageUsersFragment"
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageUsersFragment"
-        android:label="ManageUsersFragment" >
+        android:label="Manage Users" >
         <action
             android:id="@+id/action_manageUsersFragment_to_addCookerFragment"
             app:destination="@id/addCookerFragment" />
     </fragment>
     <fragment
-        android:id="@+id/addCookerFragment"
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.AddCookerFragment"
-        android:label="AddCookerFragment" />
+        android:label="AddCookerFragment"
+        android:id="@+id/addCookerFragment"/>
+
+    <fragment
+        android:id="@+id/userReportListFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.UserReportListFragment"
+        android:label="Report Details">
+        <argument
+            android:name="reportPos"
+            app:argType="java.util.HashMap" />
+    </fragment>
+    <fragment
+        android:id="@+id/userAccount"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.UserAccount"
+        android:label="Users"
+        tools:layout="@layout/single_recyclerview_layout">
+        <argument
+            android:name="userPosition"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_userAccount_to_userReportListFragment"
+            app:destination="@id/userReportListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/manageReportsFragment2"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageReportsFragment"
+        android:label="ManageReportsFragment" >
+        <action
+            android:id="@+id/action_manageReportsFragment2_to_userAccount"
+            app:destination="@id/userAccount" />
+    </fragment>
 </navigation>

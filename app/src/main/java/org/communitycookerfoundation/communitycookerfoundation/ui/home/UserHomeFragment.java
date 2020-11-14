@@ -31,7 +31,6 @@ public class UserHomeFragment extends Fragment {
     private int count;
     private TextView mWelcomeMessage;
 
-
     public UserHomeFragment() {
         // Required empty public constructor
 
@@ -47,7 +46,7 @@ public class UserHomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull  View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        view.setVisibility(View.INVISIBLE);
 
 
 
@@ -77,7 +76,7 @@ public class UserHomeFragment extends Fragment {
             }
         });
 
-        //view.setVisibility(View.INVISIBLE);
+
         mRecyclerView.setAdapter(mReportAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setNestedScrollingEnabled(false);

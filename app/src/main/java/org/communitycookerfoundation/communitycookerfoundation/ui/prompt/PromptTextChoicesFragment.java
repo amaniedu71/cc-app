@@ -147,6 +147,7 @@ public class PromptTextChoicesFragment extends Fragment {
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
         TextView currentNum = view.findViewById(R.id.currentPromptTextChoices);
+        mCurPos+=1;
         currentNum.setText(""+mCurPos);
         setProgressBar();
      /*   mEditText.addTextChangedListener(new TextWatcher() {

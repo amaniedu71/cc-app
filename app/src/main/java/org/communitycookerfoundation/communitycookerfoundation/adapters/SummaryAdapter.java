@@ -13,13 +13,18 @@ import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicRe
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 
 public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryViewHolder> {
 
     private List<BasicReportEntity> mFields; //cached copy
+    private List<Integer> mFieldsIndeces = new ArrayList<>();
     private OnSummaryListener mOnSummaryListener;
+    private List<Integer> mKeys;
 
     public SummaryAdapter(OnSummaryListener onSummaryListener){
         mOnSummaryListener = onSummaryListener;
@@ -41,6 +46,8 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
             if(mFields.get(position) instanceof ReportEntity) {
                 holder.prompt1ItemView.setText(( ((ReportEntity) mFields.get(position)).getPrompt()));
                 holder.response1ItemView.setText(((ReportEntity) mFields.get(position)).getResponse());
+                int hold = mKeys.get(position)+1;
+                holder.numberItemView.setText(""+hold);//TODO:do this proper way!
             }
             else if(mFields.get(position) instanceof ReportListEntity){
                 holder.prompt1ItemView.setText(((ReportListEntity) mFields.get(position)).getPrompt());
@@ -61,20 +68,29 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
         return mFields.size();
     }
 
-    public void setFields(List<BasicReportEntity> reportEntity) {
-        mFields = reportEntity;
+    public void setFields(Map<Integer, BasicReportEntity> reportEntity) {
+
+        mKeys = new ArrayList<>(reportEntity.keySet());
+        Collections.sort(mKeys);
+        List<BasicReportEntity> finalTmp = new ArrayList<>();
+        for (int i : mKeys) {
+            finalTmp.add(reportEntity.get(i));
+        }
+        mFields = finalTmp;
         notifyDataSetChanged();
     }
 
     public class SummaryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public final TextView prompt1ItemView;
         public final TextView response1ItemView;
+        public final TextView numberItemView;
         View mParentGroup;
 
         public SummaryViewHolder(@NonNull View itemView) {
             super(itemView);
             this.prompt1ItemView = itemView.findViewById(R.id.prompt1_summary);
             this.response1ItemView = itemView.findViewById(R.id.response1_summary);
+            this.numberItemView = itemView.findViewById(R.id.question_number_summary);
             itemView.setOnClickListener(this);
 
 
@@ -82,7 +98,10 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
 
         @Override
         public void onClick(View view) {
-        mOnSummaryListener.onReportListClick(getAdapterPosition());
+            int numberToRet;
+            if(mFields != null)  numberToRet = (mKeys.get(getAdapterPosition()));
+            else numberToRet = 0;
+            mOnSummaryListener.onReportListClick(numberToRet);
 
 
         }
@@ -90,6 +109,7 @@ public class SummaryAdapter extends RecyclerView.Adapter<SummaryAdapter.SummaryV
     public interface OnSummaryListener {
 
         void onReportListClick(int reportId);
+
 
     }
 }

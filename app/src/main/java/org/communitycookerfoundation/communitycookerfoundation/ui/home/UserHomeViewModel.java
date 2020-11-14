@@ -44,8 +44,8 @@ public class UserHomeViewModel extends AndroidViewModel {
             @Override
             public void onSuccess(GetTokenResult result) {
                 try{
-                    boolean isAdmin = (boolean) result.getClaims().get("authd_user"); // 2
-                    if (isAdmin) {
+                    boolean isAuthdUser = (boolean) result.getClaims().get("authd_user"); // 2
+                    if (isAuthdUser) {
                         mIsAuthdUser.setValue(Boolean.TRUE);
                     }
                 } catch (Exception e) {

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CCF</string>
+    <string name="app_name">CC Operator</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -24,6 +24,7 @@
     <string name="promptText1">"How many liters of water have you used today? "</string>
     <string name="add_report">Complete Daily Record</string>
     <string name="toast_empty_string">Please add a value!</string>
+    <string name="toast_empty_box">Please select an option</string>
     <string name="prompt1">Daily Reporting</string>
     <string name="welcome_message">Hello</string>
     <string name="refresh_reports">Refresh</string>
@@ -39,4 +40,5 @@
     <string name="next_btn">Next</string>
     <string name="finish">Finish</string>
     <string name="back_btn">back</string>
+    <string name="summary_frag">Review Your Responses</string>
 </resources>

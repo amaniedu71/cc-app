@@ -105,15 +105,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_sign_out:
                 signOut();
                 return true;
-            case R.id.action_delete:
-                deleteAccount();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
 
         }
     }
-
     private void signOut() {
         AuthUI.getInstance().signOut(this).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -130,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-
+//no need
     private void deleteAccount() {
         AuthUI.getInstance().delete(this).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override

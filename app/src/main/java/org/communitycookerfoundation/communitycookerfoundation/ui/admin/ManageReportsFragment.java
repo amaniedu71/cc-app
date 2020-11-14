@@ -92,7 +92,7 @@ public class ManageReportsFragment extends Fragment implements AdminUserAdapter.
     public void onUserClick(int position) {
         Log.d(TAG, "CLICKED!");
         String userUID = mViewModel.getUserUID(position);
-        ManageReportsFragmentDirections.ActionManageReportsFragmentToUserAccount action = ManageReportsFragmentDirections.actionManageReportsFragmentToUserAccount(userUID);
+        ManageReportsFragmentDirections.ActionManageReportsFragment2ToUserAccount action = ManageReportsFragmentDirections.actionManageReportsFragment2ToUserAccount(userUID);
         NavHostFragment.findNavController(ManageReportsFragment.this).navigate(action);
 
     }

@@ -13,9 +13,9 @@ import java.util.Calendar;
 public  class DatePickerFragment extends DialogFragment
          {
 
-    private final AddCookerFragment onDateSetListener;
+    private final DatePickerDialog.OnDateSetListener onDateSetListener;
 
-    public DatePickerFragment(AddCookerFragment addCookerFragment) {
+    public DatePickerFragment(DatePickerDialog.OnDateSetListener addCookerFragment) {
         onDateSetListener = addCookerFragment;
     }
 

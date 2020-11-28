@@ -13,6 +13,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -35,6 +36,7 @@ import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptOptional;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
+import java.net.HttpCookie;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,11 +58,12 @@ public class DataRepo {
     private Integer mUserCount;
     private Boolean misUserGen;
    // private final Observer mObserveUserDB;
-    private MutableLiveData<List<Map<String, Object>>> mUserList = new MutableLiveData<>();
+    private MutableLiveData<List<Map<String, Object>>> mUserList = new MutableLiveData<List<Map<String, Object>>>(new ArrayList<Map<String, Object>>());
 
 
     private MutableLiveData<List<Map<String, Object>>> mUserReports = new MutableLiveData<>();
     private MutableLiveData<List<ReportPrompt>> mAllPrompts = new MutableLiveData<>();
+    private MutableLiveData<List<ReportPrompt>> mTestAdditionalPrompts = new MutableLiveData<>();
 
 
     public LiveData<Boolean> getIsAdmin() {
@@ -84,8 +87,8 @@ public class DataRepo {
         UserDB userDB = UserDB.getInstance(application);
         mUserDao = userDB.userDao();
         mFirebaseDB = FirebaseFirestore.getInstance();
-        mFirebaseUser = firebaseUser;
-        mUserId = mFirebaseUser.getUid();
+        mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        if(mFirebaseUser != null) mUserId = mFirebaseUser.getUid();
 
 
         /*UserDB.databaseWriteExecutor.execute(new Runnable() {
@@ -486,16 +489,70 @@ public class DataRepo {
                     }
                 });
 
+        //TEST ADDITIONAL MODULES
+        mFirebaseDB.collection("report_set").document("eateries_bakeries").collection("report_prompts")
+                .orderBy("question_id").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot value,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
 
+                List<ReportPrompt> prompts = new ArrayList<>();
+                for (QueryDocumentSnapshot doc : value) {
+                    if (doc.get("input_type") != null) {
+                        String inputType = (String) doc.get("input_type");
+                        if(inputType.contains("number")){
+                            ReportPromptNum reportPromptNum = doc.toObject(ReportPromptNum.class);
+                            prompts.add(reportPromptNum);
+                        }
+                        else if(inputType.contains("conditional_bool")){
+                            ReportPromptCond reportPromptCond = doc.toObject(ReportPromptCond.class);
+                            prompts.add(reportPromptCond);
+                        }
+                        else if(inputType.contains("text_choices")){
+                            ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
+                            prompts.add(reportPromptTextChoices);
+                        }
+                        else if(inputType.contains("optional_choices")){
+                            ReportPromptOptional reportPromptOptional = doc.toObject(ReportPromptOptional.class);
+                            prompts.add(reportPromptOptional);
+                        }
+
+
+
+                    }
+                }
+
+
+                for (ReportPrompt additionalPrompt:prompts) {
+
+                    mAllPrompts.getValue().add(additionalPrompt);
+                    Log.d(TAG, "Log Prompts: " +  additionalPrompt +"\nPrompt id:  " + additionalPrompt.getQuestion_id());
+
+                }
+            }
+        });
 
     }
+
+
+
+
+
     public LiveData<List<ReportPrompt>> getAllPrompts(){
+
         getPromptsFb();
         return mAllPrompts;
 
+
     }
 
-   /* public LiveData<List<ReportPrompt>> getTestPrompts() {
+
+
+    /* public LiveData<List<ReportPrompt>> getTestPrompts() {
 
         MutableLiveData<List<ReportPrompt>> mTestPrompts = new MutableLiveData<>();
         List<ReportPrompt> prompts = new ArrayList<>();
@@ -508,6 +565,8 @@ public class DataRepo {
 
     }
 */
+
+
     public void addUser(Map<String, String> cookerUser) {
         Map<String, Object> parentData = new HashMap<>();
         Map<String, String> tempData = new HashMap<>();
@@ -529,24 +588,28 @@ public class DataRepo {
                         Log.w(TAG, "Error adding document", e);
                     }
                 });
+
+
+    }
+
+    public void addUserInfo(String uid, Map<String, Object> userInfo) {
+        // allows updating of user info
+        Map<String,Object> parentData = new HashMap<>();
+        parentData.put((String) userInfo.get("name"), userInfo);
         mFirebaseDB.collection("private_data").document("user_info")
-                .collection("users")
-                .document(cookerUser.get("name"))
-                .set(cookerUser)
+                .set(parentData, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "User Info Added!");
+                        Log.d(TAG, "UserInfo Added!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error adding user info", e);
+                        Log.w(TAG, "Error adding UserInfo", e);
                     }
                 });
-
-
 
     }
 }

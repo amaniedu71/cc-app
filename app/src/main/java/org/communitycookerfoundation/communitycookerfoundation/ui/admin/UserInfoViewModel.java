@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -17,19 +18,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AddCookerViewModel extends AndroidViewModel {
+public class UserInfoViewModel extends AndroidViewModel {
 
     FirebaseUser mCurrentUser;
     private DataRepo mRepo;
+    private LiveData<List<ReportEntity>> mAllReports;
+    private MutableLiveData<List<Map<String, Object>>> mAllUsers;
 
-    public AddCookerViewModel(@NonNull Application application) {
+    public UserInfoViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mRepo = new DataRepo(application, mCurrentUser);
+        mAllReports = mRepo.getAllReports();
+        mAllUsers = mRepo.getAllUsers();
     }
 
-
-    //public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
 
 
     @Override
@@ -38,15 +41,20 @@ public class AddCookerViewModel extends AndroidViewModel {
         mRepo.clearObservedData();
     }
 
+    public MutableLiveData<List<Map<String, Object>>> getAllUsers() {
+        return mAllUsers;
+    }
+    public void refreshAllUsers(){
+        mRepo.refreshUserList();
+    }
 
+    public String getUserUID(int position) {
+        return (String) mAllUsers.getValue().get(position).get("user_uid");
+    }
 
-    public void addCookerUser(String userTitle, String userEmail) {
-        Map<String, String> cookerUser = new HashMap<>();
-        cookerUser.put("name", userTitle);
-        cookerUser.put("email", userEmail);
-        cookerUser.put("role", "user");
+    public void addCookerInfo(String currentUser,Map<String, Object> userInfo ) {
 
-        mRepo.addUser(cookerUser);
+        mRepo.addUserInfo(currentUser, userInfo);
 
     }
 }

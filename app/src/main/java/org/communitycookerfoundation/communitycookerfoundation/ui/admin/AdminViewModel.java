@@ -51,9 +51,7 @@ public class AdminViewModel extends AndroidViewModel {
         mRepo.refreshUserList();
     }
 
-    public String getUserUID(int position) {
-        return mRepo.getUserUID(position);
-    }
+
 }
 
 

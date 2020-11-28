@@ -23,16 +23,20 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AddCookerFragment  extends Fragment {
+public class UserInfoFragment  extends Fragment implements DatePickerDialog.OnDateSetListener {
 
     private TextInputEditText mEmailAddress;
     private TextInputLayout mLayoutEmail;
     private TextView mCalendarText;
-    private AddCookerViewModel mViewModel;
+    private UserInfoViewModel mViewModel;
     private TextInputEditText mNamePerson;
+    private String currentUser;
 
     @Override
     public View onCreateView(
@@ -51,11 +55,17 @@ public class AddCookerFragment  extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         mNamePerson = view.findViewById(R.id.input_answer2);
+        Button dateBtn = view.findViewById(R.id.open_cal);
         mEmailAddress = view.findViewById(R.id.input_email);
         mCalendarText = getView().findViewById(R.id.textView);
         Button nextBtn = view.findViewById(R.id.next_btn);
-        mViewModel = new ViewModelProvider(this).get(AddCookerViewModel.class);
-
+        mViewModel = new ViewModelProvider(this).get(UserInfoViewModel.class);
+        dateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(view);
+            }
+        });
         mCalendarText.setText("No date chosen yet");
        /* mEditText.addTextChangedListener(new TextWatcher() {
 
@@ -82,8 +92,9 @@ public class AddCookerFragment  extends Fragment {
             @Override
             public void onClick(View view) {
                 if(!TextUtils.isEmpty(mEmailAddress.getText().toString()) && !TextUtils.isEmpty(mNamePerson.getText().toString())){
-                    mViewModel.addCookerUser(mNamePerson.getText().toString(), mEmailAddress.getText().toString());
-                    NavHostFragment.findNavController(AddCookerFragment.this).popBackStack();
+                    Map<String, Object> userInfo = new HashMap<>();
+                    mViewModel.addCookerInfo(currentUser,  userInfo);
+                    NavHostFragment.findNavController(UserInfoFragment.this).popBackStack();
 
                 }
                 else {
@@ -92,9 +103,22 @@ public class AddCookerFragment  extends Fragment {
 
                 }
 
+
             }
         });
+
     }
 
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment(this);
+        newFragment.show(getParentFragmentManager(), "datePicker");
+    }
 
+    @Override
+    public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+        ++month; //month starts from 0 for some reason
+        String text = dayOfMonth+"/"+month+"/"+year;
+        mCalendarText.setText(text);
+
+    }
 }

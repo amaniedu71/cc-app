@@ -23,11 +23,13 @@ import java.util.Map;
 
 public class PromptViewModel extends AndroidViewModel {
     FirebaseUser mCurrentUser;
-    private String Prompt1;
-    private String resp1;
+
     private MutableLiveData<Map<Integer, BasicReportEntity>> mReports = new MutableLiveData<>();
     private DataRepo mRepo;
     private List<BasicReportEntity> insertReport = new ArrayList<>();
+
+
+
     private LiveData<List<ReportPrompt>> mReportPrompts;
     private MutableLiveData<List<ReportListEntity>> mReportsList = new MutableLiveData<>();
 
@@ -36,9 +38,13 @@ public class PromptViewModel extends AndroidViewModel {
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         mRepo = new DataRepo(application, mCurrentUser);
         mReportPrompts = mRepo.getAllPrompts();
+
         mReports.setValue(new HashMap<Integer, BasicReportEntity>());
 
     }
+
+
+
     public LiveData<List<ReportPrompt>> getReportPrompts() {
         return mReportPrompts;
     }
@@ -49,7 +55,10 @@ public class PromptViewModel extends AndroidViewModel {
 
 
 
-    public MutableLiveData<Map<Integer, BasicReportEntity>> getReports() {return mReports;}
+    public LiveData<Map<Integer, BasicReportEntity>> getReports() {
+        return mReports;
+
+    }
     public void insertReports() {
         List<Integer> keys = new ArrayList<>(mReports.getValue().keySet());
         Collections.sort(keys);

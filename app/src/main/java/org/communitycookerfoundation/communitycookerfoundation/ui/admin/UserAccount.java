@@ -58,12 +58,11 @@ public class UserAccount extends Fragment implements ReportListAdapter.OnReportC
                 if(reports.size()>0){
                     mReportListAdapter.setReports(reports);
                     for(Map<String, Object> tempMap: reports){
+
                         for(String keys:tempMap.keySet()){
                             Log.d(TAG, "We got something: "+ keys);
                         }
                     }
-
-
                 }
             }
         });

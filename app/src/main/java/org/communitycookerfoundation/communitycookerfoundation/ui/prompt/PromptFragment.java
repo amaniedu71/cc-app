@@ -31,6 +31,8 @@ import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +116,13 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
         mViewModel.getReportPrompts().observe(this.getViewLifecycleOwner(), new Observer<List<ReportPrompt>>() {
             @Override
             public void onChanged(List<ReportPrompt> reportPrompts) {
+                Collections.sort(reportPrompts, new Comparator<ReportPrompt>() {
+                    @Override
+                    public int compare(ReportPrompt o1, ReportPrompt o2) {
+
+                        return o1.getQuestion_id()<o2.getQuestion_id()? -1: o1.getQuestion_id() == o2.getQuestion_id()? 0 : 1;
+                    }
+                });
                 setViewPager(reportPrompts);
 
 

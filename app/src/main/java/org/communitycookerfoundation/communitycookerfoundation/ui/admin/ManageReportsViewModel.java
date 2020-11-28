@@ -52,7 +52,7 @@ public class ManageReportsViewModel extends AndroidViewModel {
     }
 
     public String getUserUID(int position) {
-        return mRepo.getUserUID(position);
+        return (String) mAllUsers.getValue().get(position).get("user_uid");
     }
 }
 

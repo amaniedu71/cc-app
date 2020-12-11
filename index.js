@@ -8,7 +8,7 @@ const firebase = require('firebase-admin');
 
 
 
-firebase.initializeApp({projectId: "communitycookerapp"});
+firebase.initializeApp({projectId: "communitycookerapp", storageBucket: 'communitycookerapp.appspot.com'});
 
 
 exports.addMessage = functions.https.onRequest(async (req, res) => {

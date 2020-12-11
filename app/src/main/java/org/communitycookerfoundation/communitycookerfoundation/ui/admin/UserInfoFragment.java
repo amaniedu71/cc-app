@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -14,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +27,7 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +49,7 @@ public class UserInfoFragment  extends Fragment implements DatePickerDialog.OnDa
     private String mCurrentUserUID;
     private Boolean mEditedField = false;
     private HashMap<String, Object> mUserDetails;
+    private ArrayList<String> mTextTypes;
 
     @Override
     public View onCreateView(
@@ -105,6 +110,38 @@ public class UserInfoFragment  extends Fragment implements DatePickerDialog.OnDa
 
             }
         });*/
+        final LinearLayout layout = view.findViewById(R.id.linearLayout);
+        mViewModel.getCookerTypes().observe(this.getViewLifecycleOwner(), new Observer<ArrayList<String>>() {
+
+            @Override
+            public void onChanged(ArrayList<String> strings) {
+                mTextTypes = strings;
+                for(int ind= 0; ind <=strings.size(); ind++ ){
+
+                    if(ind != strings.size()){
+                        String option = strings.get(ind);
+                        CheckBox checkBox = new CheckBox(UserInfoFragment.this.getContext());
+                        checkBox.setText(option);
+                        checkBox.setId(ind);
+                        checkBox.setEnabled(false);
+                        layout.addView(checkBox);
+                    }
+                    else{
+
+                        String option = "Basic Set";
+                        CheckBox checkBox = new CheckBox(UserInfoFragment.this.getContext());
+                        checkBox.setText(option);
+                        checkBox.setId(ind);
+                        checkBox.setEnabled(false);
+                        layout.addView(checkBox);
+
+                    }
+
+                }
+
+            }
+        });
+
        String nameSiteManager = (String) mUserDetails.get("site_manager");
        String namePersonReporting = (String) mUserDetails.get("name");
        String nameOfSite = (String) mUserDetails.get("site");
@@ -120,6 +157,13 @@ public class UserInfoFragment  extends Fragment implements DatePickerDialog.OnDa
                mNameOfSite.setEnabled(true);
                mNameOfManager.setEnabled(true);
                mNamePerson.setEnabled(true);
+               for(int i= 0; i<mTextTypes.size(); i++){
+                   CheckBox checkBox = getView().findViewById(i);
+                   checkBox.setEnabled(true);
+               }
+
+
+
            }
        });
 

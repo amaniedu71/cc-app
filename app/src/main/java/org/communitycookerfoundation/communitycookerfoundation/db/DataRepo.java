@@ -39,6 +39,7 @@ import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt
 import java.net.HttpCookie;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -64,6 +65,7 @@ public class DataRepo {
     private MutableLiveData<List<Map<String, Object>>> mUserReports = new MutableLiveData<>();
     private MutableLiveData<List<ReportPrompt>> mAllPrompts = new MutableLiveData<>();
     private MutableLiveData<List<ReportPrompt>> mTestAdditionalPrompts = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<String>> mCookerTypes = new MutableLiveData<>();
 
 
     public LiveData<Boolean> getIsAdmin() {
@@ -529,7 +531,7 @@ public class DataRepo {
 
                 for (ReportPrompt additionalPrompt:prompts) {
 
-                    mAllPrompts.getValue().add(additionalPrompt);
+                   // mAllPrompts.getValue().add(additionalPrompt);
                     Log.d(TAG, "Log Prompts: " +  additionalPrompt +"\nPrompt id:  " + additionalPrompt.getQuestion_id());
 
                 }
@@ -594,10 +596,9 @@ public class DataRepo {
 
     public void addUserInfo(String uid, Map<String, Object> userInfo) {
         // allows updating of user info
-        Map<String,Object> parentData = new HashMap<>();
-        parentData.put((String) userInfo.get("name"), userInfo);
-        mFirebaseDB.collection("private_data").document("user_info")
-                .set(parentData, SetOptions.merge())
+
+        mFirebaseDB.collection("users").document(uid)
+                .set(userInfo, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -610,6 +611,25 @@ public class DataRepo {
                         Log.w(TAG, "Error adding UserInfo", e);
                     }
                 });
+
+    }
+    public LiveData<ArrayList<String>> getCookerTypes(){
+        refreshCookerTypes();
+        return mCookerTypes;
+    }
+    private void refreshCookerTypes(){
+
+        mFirebaseDB.collection("private_data").document("cookers")
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                ArrayList<String> tempList = (ArrayList<String>) doc.get("types");
+                mCookerTypes.setValue(tempList);
+            }
+        });
+
+
 
     }
 }

@@ -23,6 +23,7 @@ import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.AdminUserAdapter;
 import org.communitycookerfoundation.communitycookerfoundation.ui.prompt.PromptFragment;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,7 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
     private Button mAddButton;
     private int count;
     private TextView mWelcomeMessage;
+    private List<Map<String, Object>> mUsers;
 
     public ManageUsersFragment() {
         // Required empty public constructor
@@ -66,6 +68,7 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
             @Override
             public void onChanged(List<Map<String, Object>> users) {
                 Log.d(TAG, "Observed!");
+                mUsers = users;
                 mAdminUserAdapter.setUsers(users);
                 //mReportAdapter.setReports(users);
 //                if(users.size()>0)
@@ -92,10 +95,9 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
 
     @Override
     public void onUserClick(int position) {
-        Log.d(TAG, "CLICKED!");
-//        String userUID = mViewModel.getUserUID(position);
-//        ManageReportsFragmentDirections.ActionManageReportsFragmentToUserAccount action = ManageReportsFragmentDirections.actionManageReportsFragmentToUserAccount(userUID);
-//        NavHostFragment.findNavController(ManageUsersFragment.this).navigate(action);
+
+        ManageUsersFragmentDirections.ActionManageUsersFragmentToUserInfoFragment action = ManageUsersFragmentDirections.actionManageUsersFragmentToUserInfoFragment((HashMap) mUsers.get(position));
+        NavHostFragment.findNavController(ManageUsersFragment.this).navigate(action);
 
     }
 

@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +52,13 @@ public class UserInfoViewModel extends AndroidViewModel {
     public String getUserUID(int position) {
         return (String) mAllUsers.getValue().get(position).get("user_uid");
     }
+    public LiveData<ArrayList<String>> getCookerTypes(){
+        return mRepo.getCookerTypes();
+    }
 
-    public void addCookerInfo(String currentUser,Map<String, Object> userInfo ) {
+    public void addCookerInfo(String userId,Map<String, Object> userInfo ) {
 
-        mRepo.addUserInfo(currentUser, userInfo);
+        mRepo.addUserInfo(userId, userInfo);
 
     }
 }

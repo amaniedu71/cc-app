@@ -82,10 +82,13 @@
         <action
             android:id="@+id/action_manageUsersFragment_to_addCookerFragment"
             app:destination="@id/addCookerFragment" />
+        <action
+            android:id="@+id/action_manageUsersFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.AddCookerFragment"
-        android:label="AddCookerFragment"
+        android:label="Add a Site"
         android:id="@+id/addCookerFragment"/>
 
     <fragment
@@ -111,9 +114,17 @@
     <fragment
         android:id="@+id/manageReportsFragment2"
         android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.ManageReportsFragment"
-        android:label="ManageReportsFragment" >
+        android:label="Manage Site Reports" >
         <action
             android:id="@+id/action_manageReportsFragment2_to_userAccount"
             app:destination="@id/userAccount" />
+    </fragment>
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="org.communitycookerfoundation.communitycookerfoundation.ui.admin.UserInfoFragment"
+        android:label="UserInfoFragment" >
+        <argument
+            android:name="userDetails"
+            app:argType="java.util.HashMap" />
     </fragment>
 </navigation>

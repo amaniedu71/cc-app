@@ -133,11 +133,14 @@ public class PromptTextChoicesFragment extends Fragment {
         mSpinner = view.findViewById(R.id.choice_spinner);
 // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapter;
-        if(mOptions.size() >0)
-             adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, mOptions );
+        if(mOptions.size() >0){
+            adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, mOptions );
+            adapter.add("None of the above");
+        }
+
         else
             adapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item, defaultItem );
-        adapter.add("None of the above");
+
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner

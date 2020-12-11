@@ -38,6 +38,9 @@ public class ManageReportsFragment extends Fragment implements AdminUserAdapter.
     private Button mRefreshButton;
     private int count;
     private TextView mWelcomeMessage;
+    private List<Map<String, Object>> mUsers;
+
+
 
     public ManageReportsFragment() {
         // Required empty public constructor
@@ -65,6 +68,7 @@ public class ManageReportsFragment extends Fragment implements AdminUserAdapter.
             @Override
             public void onChanged(List<Map<String, Object>> users) {
                 Log.d(TAG, "Observed!");
+                mUsers = users;
                 mAdminUserAdapter.setUsers(users);
                 //mReportAdapter.setReports(users);
 //                if(users.size()>0)
@@ -91,7 +95,7 @@ public class ManageReportsFragment extends Fragment implements AdminUserAdapter.
     @Override
     public void onUserClick(int position) {
         Log.d(TAG, "CLICKED!");
-        String userUID = mViewModel.getUserUID(position);
+        String userUID = (String) mUsers.get(position).get("user_id");
         ManageReportsFragmentDirections.ActionManageReportsFragment2ToUserAccount action = ManageReportsFragmentDirections.actionManageReportsFragment2ToUserAccount(userUID);
         NavHostFragment.findNavController(ManageReportsFragment.this).navigate(action);
 

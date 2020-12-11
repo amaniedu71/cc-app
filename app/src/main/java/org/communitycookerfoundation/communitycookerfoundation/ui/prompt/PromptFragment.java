@@ -321,11 +321,11 @@ public class PromptFragment extends Fragment implements PromptNumFragment.OnProm
             }
 
         }
-        else if(mPager.getCurrentItem()<mAllPrompts.size()-1) {
-            mPager.setCurrentItem(mPager.getCurrentItem() + 1);
-
-
-        }
+//        else if(mPager.getCurrentItem()<mAllPrompts.size()-1) {
+//            mPager.setCurrentItem(mPager.getCurrentItem() + 1);
+//
+//
+//        }
         else
             navToSummary();
 

@@ -4,8 +4,11 @@ import android.app.DatePickerDialog;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -13,8 +16,12 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +29,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,7 +42,8 @@ public class AddCookerFragment  extends Fragment {
     private TextInputLayout mLayoutEmail;
     private TextView mCalendarText;
     private AddCookerViewModel mViewModel;
-    private TextInputEditText mNamePerson;
+    private Spinner mSpinner;
+    private ArrayList<String> mCookerTypes;
 
     @Override
     public View onCreateView(
@@ -49,14 +60,21 @@ public class AddCookerFragment  extends Fragment {
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        mNamePerson = view.findViewById(R.id.input_answer2);
+    public void onViewCreated(@NonNull final View view, Bundle savedInstanceState) {
         mEmailAddress = view.findViewById(R.id.input_email);
         mCalendarText = getView().findViewById(R.id.textView);
-        Button nextBtn = view.findViewById(R.id.next_btn);
+        final Button nextBtn = view.findViewById(R.id.next_btn);
         mViewModel = new ViewModelProvider(this).get(AddCookerViewModel.class);
+        //Attempt to create spinner
 
-        mCalendarText.setText("No date chosen yet");
+        //final ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<>(this.getContext(), android.R.layout.simple_spinner_item);
+        //spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+
+
+//        mSpinner.setAdapter(spinnerAdapter);
+
        /* mEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -81,8 +99,8 @@ public class AddCookerFragment  extends Fragment {
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!TextUtils.isEmpty(mEmailAddress.getText().toString()) && !TextUtils.isEmpty(mNamePerson.getText().toString())){
-                    mViewModel.addCookerUser(mNamePerson.getText().toString(), mEmailAddress.getText().toString());
+                if(!TextUtils.isEmpty(mEmailAddress.getText().toString())){
+                    mViewModel.addCookerUser( mEmailAddress.getText().toString());
                     NavHostFragment.findNavController(AddCookerFragment.this).popBackStack();
 
                 }

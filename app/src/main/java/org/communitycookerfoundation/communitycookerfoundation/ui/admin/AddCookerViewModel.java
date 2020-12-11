@@ -13,6 +13,7 @@ import com.google.firebase.auth.FirebaseUser;
 import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,8 @@ public class AddCookerViewModel extends AndroidViewModel {
     }
 
 
+
+
     //public void insertFb(ReportEntity reportEntity) {mRepo.insertReportFb(reportEntity);}
 
 
@@ -40,9 +43,8 @@ public class AddCookerViewModel extends AndroidViewModel {
 
 
 
-    public void addCookerUser(String userTitle, String userEmail) {
+    public void addCookerUser(String userEmail) {
         Map<String, String> cookerUser = new HashMap<>();
-        cookerUser.put("name", userTitle);
         cookerUser.put("email", userEmail);
         cookerUser.put("role", "user");
 

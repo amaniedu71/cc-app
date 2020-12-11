@@ -14,10 +14,10 @@ firebase.initializeApp({projectId: "communitycookerapp", storageBucket: 'communi
 exports.addMessage = functions.https.onRequest(async (req, res) => {
 
 
-    let query = firebase.firestore().doc('users/WT1bFP46yEZXHYEGL3GKmk7LqNA2/user_reports/2020-11-26')
-    return query.get().then(documentSnapshot => {
-		  if(documentSnapshot.exists) {
-        const applications =  doc.data();
+    let query = firebase.firestore().collection('users/WT1bFP46yEZXHYEGL3GKmk7LqNA2/user_reports')
+    return query.get().then(snap => {
+		  if(true) {
+        const applications =  snap.docs.map(doc => doc.data());
 
      
 

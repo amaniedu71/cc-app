@@ -188,7 +188,7 @@ public class PromptNumFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBtnClicked.onBackClick(mPrevPos);
+                mBtnClicked.onBackClick();
             }
 
 
@@ -210,13 +210,13 @@ public class PromptNumFragment extends Fragment {
         if (!inputString.isEmpty()) {
             if (Integer.parseInt(inputString) > mMaxValue) {
                 mInputEditLayout.setErrorEnabled(true);
-                mInputEditLayout.setError("Please add an amount less than " + mMaxValue);
+                mInputEditLayout.setError("Please add an amount less than " + (mMaxValue+1));
                 return false;
             }
 
         else if (Integer.parseInt(inputString) < mMinValue) {
             mInputEditLayout.setErrorEnabled(true);
-                mInputEditLayout.setError("Please add an amount greater than " + mMinValue);
+                mInputEditLayout.setError("Please add an amount greater than " + (mMinValue-1));
                 return false;
             }
             
@@ -235,7 +235,7 @@ public class PromptNumFragment extends Fragment {
 
     public  interface OnPromptBtnClicked {
          void onNextClick( String response);
-         void onBackClick(int prevPos);
+         void onBackClick();
     }
 
 }

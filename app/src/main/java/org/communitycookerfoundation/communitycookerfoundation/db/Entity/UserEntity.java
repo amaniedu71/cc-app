@@ -5,6 +5,8 @@ import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.util.List;
+
 
 @Entity(tableName = "user_table")
 public class UserEntity {
@@ -16,9 +18,9 @@ public class UserEntity {
     @NonNull
     private String mName;
 
-    @ColumnInfo(name = "isadmin")
+    @ColumnInfo(name = "role")
     @NonNull
-    private Boolean mIsAdmin;
+    private List<String>  mRole;
 
 
 
@@ -29,15 +31,15 @@ public class UserEntity {
 
 
 
-    public UserEntity(@NonNull String name, String authUID, Boolean isAdmin) {
+    public UserEntity(@NonNull String name, @NonNull String authUID, @NonNull List<String> role) {
         this.mName = name;
         this.mAuthUID = authUID;
-        this.mIsAdmin = isAdmin;
+        this.mRole= role;
     }
 
     public String getName() { return mName;}
 
-    public Boolean getIsAdmin() { return mIsAdmin;}
+    public List<String> getRole() { return mRole;}
 
     public Integer getId() {return id;}
 

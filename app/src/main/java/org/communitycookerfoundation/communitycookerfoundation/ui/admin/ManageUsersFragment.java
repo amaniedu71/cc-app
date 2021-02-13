@@ -96,7 +96,7 @@ public class ManageUsersFragment extends Fragment implements AdminUserAdapter.On
     @Override
     public void onUserClick(int position) {
 
-        ManageUsersFragmentDirections.ActionManageUsersFragmentToUserInfoFragment action = ManageUsersFragmentDirections.actionManageUsersFragmentToUserInfoFragment((HashMap) mUsers.get(position));
+        ManageUsersFragmentDirections.ActionManageUsersFragmentToUserInfoFragment action = ManageUsersFragmentDirections.actionManageUsersFragmentToUserInfoFragment((HashMap<String, Object>) mUsers.get(position));
         NavHostFragment.findNavController(ManageUsersFragment.this).navigate(action);
 
     }

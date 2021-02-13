@@ -17,6 +17,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.ReportListAdapter;
@@ -31,6 +33,7 @@ public class UserAccount extends Fragment implements ReportListAdapter.OnReportC
     private String mCurrentUserUID;
     private ReportListAdapter mReportListAdapter;
     private RecyclerView mRecycler;
+    private Button mExportReportsBtn;
 
     public static UserAccount newInstance() {
         return new UserAccount();
@@ -39,16 +42,16 @@ public class UserAccount extends Fragment implements ReportListAdapter.OnReportC
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.single_recyclerview_layout, container, false);
+        return inflater.inflate(R.layout.reports_list_fragment, container, false);
     }
 
     @Override
     public void onViewCreated(@Nullable View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mViewModel = new ViewModelProvider(UserAccount.this).get(UserViewModel.class);
-
+        mExportReportsBtn = view.findViewById(R.id.export_reports_btn);
         mCurrentUserUID = UserAccountArgs.fromBundle(getArguments()).getUserPosition();
-        mRecycler = view.findViewById(R.id.userRecycler);
+        mRecycler = view.findViewById(R.id.reports_recyclerview);
         mReportListAdapter = new ReportListAdapter(this);
         mRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         mRecycler.setAdapter(mReportListAdapter);
@@ -65,6 +68,15 @@ public class UserAccount extends Fragment implements ReportListAdapter.OnReportC
                     }
                 }
             }
+        });
+
+        mExportReportsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.exportReports(mCurrentUserUID);
+                Toast.makeText(UserAccount.this.getContext(), "reports exporting...", Toast.LENGTH_LONG).show();
+            }
+
         });
 
 

@@ -31,17 +31,17 @@
                     android:id="@+id/refresh_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/refresh_reports"
+                    android:text="@string/export_title"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    app:layout_constraintBottom_toTopOf="@id/refresh_button"
+                    app:layout_constraintBottom_toTopOf="@id/export_reports_btn"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_chainStyle="packed" />
 
                 <Button
-                    android:id="@+id/refresh_button"
+                    android:id="@+id/export_reports_btn"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_margin="10dp"
@@ -51,7 +51,7 @@
                     android:fontFamily="sans-serif-light"
                     android:gravity="center"
                     android:stateListAnimator="@null"
-                    android:text="O"
+                    android:text="Export"
                     android:textColor="#FFF"
                     android:textSize="25sp"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -62,7 +62,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/admin_userlist_recycler"
+            android:id="@+id/reports_recyclerview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

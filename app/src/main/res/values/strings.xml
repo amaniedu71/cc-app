@@ -9,7 +9,7 @@
 
     <string name="menu_home">Home</string>
     <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_slideshow">Success</string>
 
     <string name="home_second">Home Second</string>
     <string name="successText">You have successfully added a report!</string>
@@ -41,4 +41,6 @@
     <string name="finish">Finish</string>
     <string name="back_btn">back</string>
     <string name="summary_frag">Review Your Responses</string>
+    <string name="export_title">Export user reports as Excel file</string>
+    <string name="confirm">Confirm</string>
 </resources>

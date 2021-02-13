@@ -7,8 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,23 +23,28 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
+import com.google.firebase.platforminfo.KotlinDetector;
 
 import org.communitycookerfoundation.communitycookerfoundation.db.Dao.ReportDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Dao.UserDao;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.BasicReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportListEntity;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPrompt;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptCond;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptNum;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptOptional;
 import org.communitycookerfoundation.communitycookerfoundation.util.ReportPromptTextChoices;
 
-import java.net.HttpCookie;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -61,11 +66,12 @@ public class DataRepo {
    // private final Observer mObserveUserDB;
     private MutableLiveData<List<Map<String, Object>>> mUserList = new MutableLiveData<List<Map<String, Object>>>(new ArrayList<Map<String, Object>>());
 
-
+    private MutableLiveData<List<String>> mUserRoles = new MutableLiveData<List<String>>(new ArrayList<String>());
     private MutableLiveData<List<Map<String, Object>>> mUserReports = new MutableLiveData<>();
     private MutableLiveData<List<ReportPrompt>> mAllPrompts = new MutableLiveData<>();
     private MutableLiveData<List<ReportPrompt>> mTestAdditionalPrompts = new MutableLiveData<>();
     private MutableLiveData<ArrayList<String>> mCookerTypes = new MutableLiveData<>();
+    private final ReportDB mReportDB;
 
 
     public LiveData<Boolean> getIsAdmin() {
@@ -80,16 +86,19 @@ public class DataRepo {
     }
 */
 
-    public DataRepo(Application application, FirebaseUser firebaseUser){
+    public DataRepo(Application application){
 
 
-        ReportDB reportDB = ReportDB.getInstance(application);
-        mReportDao  = reportDB.reportDao();
+        mReportDB = ReportDB.getInstance(application);
+        mReportDao  = mReportDB.reportDao();
         mAllReports = mReportDao.getAllReports();
         UserDB userDB = UserDB.getInstance(application);
         mUserDao = userDB.userDao();
         mFirebaseDB = FirebaseFirestore.getInstance();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        //check if different user is logged in
+
+        mAllPrompts.setValue(new ArrayList<ReportPrompt>());
         if(mFirebaseUser != null) mUserId = mFirebaseUser.getUid();
 
 
@@ -109,21 +118,18 @@ public class DataRepo {
         }*/
 
 
-        /*mObserveUserDB = new Observer<UserEntity>() {
+       /* Observer<UserEntity> observeUserDB = new Observer<UserEntity>() {
             @Override
             public void onChanged(UserEntity userEntity) {
                 if (userEntity != null) {
-                    mIsAdmin.setValue(userEntity.getIsAdmin());
+                    mUserRoles = userEntity.getRole();
 
-                } else {
-                    checkAdminFb();
-                    //generateUser();
                 }
             }
-        };*/
-//        mUserEntity =  mUserDao.findByUserId(firebaseUser.getUid());
-//        mUserEntity.observeForever(mObserveUserDB);
-            /*@Override
+        };
+        mUserEntity =  mUserDao.getUserLiveData();
+        mUserEntity.observeForever(observeUserDB);*/
+                   /* @Override
             public void onChanged(Integer integer) {
                 if (integer.equals(0)) {
                     checkAdmin();
@@ -136,35 +142,89 @@ public class DataRepo {
         });*/
 
         //make sure to do this somewhere
-       // mUserDao.getCount().removeObserver();
+        //mUserDao.getUser().removeObserver(observeUserDB);
 
 
-        DocumentReference currentUser = mFirebaseDB.collection("users").document(mUserId);
-        currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-          @Override
-          public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-              if (task.isSuccessful()) {
-                  DocumentSnapshot document = task.getResult();
-                  if (document.exists()) {
-                      Log.w(TAG, "Document exists!");
-                  } else {
-                      Log.w(TAG, "Document does not exist!");
-                      //checkAdminFb();
-                      generateUser();
-                  }
 
-              }
-            }
-        });
 
     }
 
+    public LiveData<List<String>> getUserRoles() {
+//        UserDB.databaseWriteExecutor.execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                mUserRoles.setValue(mUserDao.getUserNormal().getRole());
+//
+//
+//            }
+//        });
+        DocumentReference currentUser = mFirebaseDB.collection("users").document(mUserId);
+        currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                if (doc.exists()) {
+                    Log.w(TAG, "Document exists!");
+
+                    final List<String> userRoles = (List<String>) doc.get("roles");
+                    mUserRoles.setValue(userRoles);
+
+                }
+            }
+        });
+//        String[] fakeData = {"basic_set"};
+//        mUserRoles.setValue(new ArrayList<>(Collections.singletonList("basic_set")));
+
+        return mUserRoles;
+    }
+
+
+    public void newUser() {
+        UserDB.databaseWriteExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                mReportDB.clearAllTables();
+
+            }
+        });
+        /*
+        DocumentReference currentUser = mFirebaseDB.collection("users").document(mUserId);
+        currentUser.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot doc = task.getResult();
+                if(doc.exists()){
+                    Log.w(TAG, "Document exists!");
+                    final List<String> userRoles  = (List<String>)doc.get("roles");
+                    UserDB.databaseWriteExecutor.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            UserEntity newUser = new UserEntity(mFirebaseUser.getDisplayName(), mFirebaseUser.getUid(), userRoles);
+                            mUserDao.insert(newUser);
+                            mUserRoles.setValue(userRoles);
+                        }
+                    });
+
+                } else {
+
+                    Log.w(TAG, "Document does not exist!");
+                    //checkAdminFb();
+                    generateUser();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "failed to fetch user!", e);
+            }
+        });
+
+
+*/
 
 
 
-
-
-
+    }
 
 
     private void generateUser() {
@@ -210,7 +270,14 @@ public class DataRepo {
     }
 
 
+/*
+ Room vs Firebase-
+    - user profile Fb
+    - user role Room & Firebase
+    - details of other users  - listen for changes firebase
+    - prompts and parameters
 
+ */
     public LiveData<List<ReportEntity>> getAllReports() {
         return mAllReports;
     }
@@ -222,6 +289,7 @@ public class DataRepo {
                 mReportDao.insert(report);
             }
         });
+        //TODO: check room with firebase.
 */      List<Map<String,Object>> listToInsert = new ArrayList<>();
         String curDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
@@ -271,67 +339,6 @@ public class DataRepo {
         }
     }
 
-    private void checkAdminFb() {
-        /*mCurrentUser.getIdToken(true).addOnSuccessListener(new OnSuccessListener<GetTokenResult>() { // 1
-            @Override
-            public void onSuccess(GetTokenResult result) {
-                mIsAdmin = result.getClaims().get("moderator"); // 2
-                if (isModerator) { // 3
-                    // Show moderator UI
-                    showModeratorUI();
-                } else {
-                    // Show regular user UI.
-                    showRegularUI();
-                }
-            }
-        });*/
-
-
-
-        DocumentReference docRef = mFirebaseDB.collection("private_data").document("access_list");
-        docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot document = task.getResult();
-                    if ( document.exists()) {
-                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
-                        Map<String,Object> roles = (Map<String, Object>) document.get("roles");
-                        String admin = (String) roles.get(mFirebaseUser.getUid());
-                        if(admin != null){
-                            if(admin.contentEquals("owner")){
-                                mIsAdmin.setValue( Boolean.TRUE);
-                                generateUser();
-                                return;
-                            }
-                            //other if statements
-
-                        }
-                        else
-                            Log.d(TAG, "USER ADMIN CHECK IS CAN'T BE FOUND");
-                            mIsAdmin.setValue(Boolean.FALSE);
-                            generateUser();
-
-                            return;
-
-                    } else {
-                        Log.d(TAG, "No such document");
-                        mIsAdmin.setValue(Boolean.FALSE);
-                        generateUser();
-                    }
-                } else {
-                    Log.d(TAG, "get failed with ", task.getException());
-                    mIsAdmin.setValue(Boolean.FALSE);
-                    generateUser();
-
-                }
-            }
-
-        });
-       // mIsAdmin.setValue(Boolean.FALSE);
-
-    }
-
     public void clearObservedData() {
   //      mUserEntity.removeObserver(mObserveUserDB)
     }
@@ -348,28 +355,27 @@ public class DataRepo {
 
         mFirebaseDB.collection("users")
                 .orderBy("name")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, "HERE IT IS "+ document.getId() + " => " + document.getData());
-                                tempDocStorage.add(document.getData());
-
-                            }
-                            mUserList.setValue(tempDocStorage);
-                            for (Map<String, Object> testMap : mUserList.getValue()){
-                                for (String key: testMap.keySet()){
-                                    Log.d(TAG, "KEY: "+ key + " VALUE: "+ testMap.get(key) );
-                                }
-                            }
-                            //Log.d(TAG, "STORED: " +  tempDocStorage.get(0).get("name"));
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
+                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                        if(error != null){
+                            Log.w(TAG, "Listening to all users failed", error);
+                            return;
                     }
-                });
+                        for (QueryDocumentSnapshot document : value) {
+                            Log.d(TAG, "HERE IT IS "+ document.getId() + " => " + document.getData());
+                            tempDocStorage.add(document.getData());
+
+                        }
+                        mUserList.setValue(tempDocStorage);
+                        for (Map<String, Object> testMap : mUserList.getValue()){
+                            for (String key: testMap.keySet()){
+                                Log.d(TAG, "KEY: "+ key + " VALUE: "+ testMap.get(key) );
+                            }
+                        }
+                        //Log.d(TAG, "STORED: " +  tempDocStorage.get(0).get("name"))
+                }
+            });
     }
 
     public void refreshUserReports(String userUID) {
@@ -409,6 +415,7 @@ public class DataRepo {
 
         refreshUserReports(userUID);
         return mUserReports;
+
     }
 
     public String getUserUID(int position) {
@@ -417,82 +424,11 @@ public class DataRepo {
         }
         return "null";
     }
-    public void queryPromptsFB(){
-        mFirebaseDB.collection("report_set")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<Map<String, Object>> tempDocStorage = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Log.d(TAG, "HERE IT IS "+ document.getId() + " => " + document.getData());
 
-                                List<Object> prompts = new ArrayList<>();
-                                if( document.getData().get("input_type").equals("number")){
-                                    ReportPromptNum reportPromptNum = document.toObject(ReportPromptNum.class);
-                                    prompts.add(reportPromptNum);
-                                }
+    public void getReport(String reportPath){
 
-                            }
-
-                            //Log.d(TAG, "STORED: " +  tempDocStorage.get(0).get("name"));
-                        } else {
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                        }
-                    }
-                });
-
-
-
-    }
-
-    private void getPromptsFb(){
-
-        mFirebaseDB.collection("report_set").document("basic_set").collection("report_prompts")
-                .orderBy("question_id").addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value,
-                                        @Nullable FirebaseFirestoreException e) {
-                        if (e != null) {
-                            Log.w(TAG, "Listen failed.", e);
-                            return;
-                        }
-
-                        List<ReportPrompt> prompts = new ArrayList<>();
-                        for (QueryDocumentSnapshot doc : value) {
-                            if (doc.get("input_type") != null) {
-                                String inputType = (String) doc.get("input_type");
-                                if(inputType.contains("number")){
-                                    ReportPromptNum reportPromptNum = doc.toObject(ReportPromptNum.class);
-                                    prompts.add(reportPromptNum);
-                                }
-                                else if(inputType.contains("conditional_bool")){
-                                    ReportPromptCond reportPromptCond = doc.toObject(ReportPromptCond.class);
-                                    prompts.add(reportPromptCond);
-                                }
-                                else if(inputType.contains("text_choices")){
-                                    ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
-                                    prompts.add(reportPromptTextChoices);
-                                }
-                                else if(inputType.contains("optional_choices")){
-                                    ReportPromptOptional reportPromptOptional = doc.toObject(ReportPromptOptional.class);
-                                    prompts.add(reportPromptOptional);
-                                }
-
-
-
-                            }
-                        }
-                        mAllPrompts.setValue(prompts);
-                        for (ReportPrompt logPrompt:prompts) {
-                            Log.d(TAG, "Log Prompts: " + logPrompt);
-                        }
-                    }
-                });
-
-        //TEST ADDITIONAL MODULES
-        mFirebaseDB.collection("report_set").document("eateries_bakeries").collection("report_prompts")
+        //Get all report modules
+        mFirebaseDB.collection("report_set").document(reportPath).collection("report_prompts")
                 .orderBy("question_id").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value,
@@ -502,51 +438,103 @@ public class DataRepo {
                     return;
                 }
 
-                List<ReportPrompt> prompts = new ArrayList<>();
                 for (QueryDocumentSnapshot doc : value) {
                     if (doc.get("input_type") != null) {
                         String inputType = (String) doc.get("input_type");
-                        if(inputType.contains("number")){
+                        if (inputType.contains("number")) {
                             ReportPromptNum reportPromptNum = doc.toObject(ReportPromptNum.class);
-                            prompts.add(reportPromptNum);
-                        }
-                        else if(inputType.contains("conditional_bool")){
+                            mAllPrompts.getValue().add(reportPromptNum);
+                            Log.d(TAG, "Log Prompts: " + reportPromptNum.getQuestion() + "\nPrompt id:  " + reportPromptNum.getQuestion_id());
+                        } else if (inputType.contains("conditional_bool")) {
                             ReportPromptCond reportPromptCond = doc.toObject(ReportPromptCond.class);
-                            prompts.add(reportPromptCond);
-                        }
-                        else if(inputType.contains("text_choices")){
+                            mAllPrompts.getValue().add(reportPromptCond);
+                            Log.d(TAG, "Log Prompts: " + reportPromptCond.getQuestion() + "\nPrompt id:  " + reportPromptCond.getQuestion_id());
+                        } else if (inputType.contains("text_choices")) {
                             ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
-                            prompts.add(reportPromptTextChoices);
-                        }
-                        else if(inputType.contains("optional_choices")){
+                            mAllPrompts.getValue().add(reportPromptTextChoices);
+                            Log.d(TAG, "Log Prompts: " + reportPromptTextChoices.getQuestion() + "\nPrompt id:  " + reportPromptTextChoices.getQuestion_id());
+                        } else if (inputType.contains("optional_choices")) {
                             ReportPromptOptional reportPromptOptional = doc.toObject(ReportPromptOptional.class);
-                            prompts.add(reportPromptOptional);
+                            mAllPrompts.getValue().add(reportPromptOptional);
+                            Log.d(TAG, "Log Prompts: " + reportPromptOptional.getQuestion() + "\nPrompt id:  " + reportPromptOptional.getQuestion_id());
                         }
-
-
-
                     }
-                }
-
-
-                for (ReportPrompt additionalPrompt:prompts) {
-
-                   // mAllPrompts.getValue().add(additionalPrompt);
-                    Log.d(TAG, "Log Prompts: " +  additionalPrompt +"\nPrompt id:  " + additionalPrompt.getQuestion_id());
 
                 }
+                Collections.sort(mAllPrompts.getValue(), new Comparator<ReportPrompt>() {
+                    @Override
+                    public int compare(ReportPrompt o1, ReportPrompt o2) {
+
+                        return o1.getQuestion_id()<o2.getQuestion_id()? -1: o1.getQuestion_id() == o2.getQuestion_id()? 0 : 1;
+                    }
+                });
+                mAllPrompts.setValue(mAllPrompts.getValue());
             }
         });
-
     }
 
 
 
+    public LiveData<List<ReportPrompt>> getAllPrompts(List<String> userRoles){
+//        Log.d(TAG, "path: "+ reportPath+" size: "+ mUserRoles.size());
+        if(userRoles.size()>0) {
+            boolean containsBasicSet = false;
+            if(userRoles.contains("basic_set")){
+                containsBasicSet = true;
+                getReport("basic_set");
+            }
+            /*List<ReportPrompt> prompts = new ArrayList<>();
+
+            mFirebaseDB.collection("report_set").document("basic_set").collection("report_prompts")
+                    .orderBy("question_id").addSnapshotListener(new EventListener<QuerySnapshot>() {
+                @Override
+                public void onEvent(@Nullable QuerySnapshot value,
+                                    @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.w(TAG, "Listen failed.", e);
+                        return;
+                    }
+
+                    List<ReportPrompt> prompts = new ArrayList<>();
+                    for (QueryDocumentSnapshot doc : value) {
+                        if (doc.get("input_type") != null) {
+                            String inputType = (String) doc.get("input_type");
+                            if (inputType.contains("number")) {
+                                ReportPromptNum reportPromptNum = doc.toObject(ReportPromptNum.class);
+                                prompts.add(reportPromptNum);
+                            } else if (inputType.contains("conditional_bool")) {
+                                ReportPromptCond reportPromptCond = doc.toObject(ReportPromptCond.class);
+                                prompts.add(reportPromptCond);
+                            } else if (inputType.contains("text_choices")) {
+                                ReportPromptTextChoices reportPromptTextChoices = doc.toObject(ReportPromptTextChoices.class);
+                                prompts.add(reportPromptTextChoices);
+                            } else if (inputType.contains("optional_choices")) {
+                                ReportPromptOptional reportPromptOptional = doc.toObject(ReportPromptOptional.class);
+                                prompts.add(reportPromptOptional);
+                            }
 
 
-    public LiveData<List<ReportPrompt>> getAllPrompts(){
+                        }
+                    }
+                    mAllPrompts.getValue().add(prompts);
+                    for (ReportPrompt logPrompt : prompts) {
+                        Log.d(TAG, "Log Prompts: " + logPrompt);
+                    }
 
-        getPromptsFb();
+                }
+            });
+*/
+            for (final String reportPath : userRoles) {
+                if(containsBasicSet && reportPath.equals("basic_set")){
+                    continue;
+                }
+                getReport(reportPath);
+            }
+        }
+        else{
+            Log.d(TAG, "Roles are empty!");
+        }
+
         return mAllPrompts;
 
 
@@ -630,6 +618,27 @@ public class DataRepo {
         });
 
 
+
+    }
+
+    public Task<String> exportReport(String uid) {
+        Map<String , Object> data = new HashMap<>();
+        data.put("uid", uid);
+        FirebaseFunctions functions = FirebaseFunctions.getInstance();
+        return functions
+                .getHttpsCallable("exportData")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        return (String) task.getResult().getData();
+                    }
+                });
+
+    }
+
+    public LiveData<UserEntity> getLocalUserInfo() {
+        return(mUserDao.getUserLiveData());
 
     }
 }

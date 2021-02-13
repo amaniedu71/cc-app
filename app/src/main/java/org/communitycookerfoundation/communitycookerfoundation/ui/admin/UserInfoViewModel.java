@@ -6,7 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -15,7 +14,6 @@ import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +27,7 @@ public class UserInfoViewModel extends AndroidViewModel {
     public UserInfoViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mRepo = new DataRepo(application, mCurrentUser);
+        mRepo = new DataRepo(application);
         mAllReports = mRepo.getAllReports();
         mAllUsers = mRepo.getAllUsers();
     }

@@ -222,7 +222,7 @@ public class PromptOptionalFragment extends Fragment {
         mCancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mBtnClicked.onBackClick(mPrevPos);
+                mBtnClicked.onBackClick();
             }
 
 
@@ -271,7 +271,7 @@ public class PromptOptionalFragment extends Fragment {
 
     public  interface OnPromptOptionalBtnClicked {
         void onNextClick( List<String> response);
-        void onBackClick(int prevPos);
+        void onBackClick();
 
     }
 

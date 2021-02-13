@@ -26,7 +26,7 @@ public class AdminViewModel extends AndroidViewModel {
     public AdminViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mRepo = new DataRepo(application, mCurrentUser);
+        mRepo = new DataRepo(application);
         mAllReports = mRepo.getAllReports();
         mAllUsers = mRepo.getAllUsers();
     }

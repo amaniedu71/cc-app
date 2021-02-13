@@ -16,8 +16,12 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import org.communitycookerfoundation.communitycookerfoundation.R;
 import org.communitycookerfoundation.communitycookerfoundation.adapters.UserReportListAdapter;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -30,6 +34,8 @@ public class UserHomeFragment extends Fragment {
     private Button mAddButton;
     private int count;
     private TextView mWelcomeMessage;
+    FirebaseUser mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
     public UserHomeFragment() {
         // Required empty public constructor
@@ -47,12 +53,19 @@ public class UserHomeFragment extends Fragment {
     public void onViewCreated(@NonNull  View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.setVisibility(View.INVISIBLE);
+        mViewModel = new ViewModelProvider(this).get(UserHomeViewModel.class);
 
 
-
+        mViewModel.getLocalUserInfo().observe(this.getViewLifecycleOwner(), new Observer<UserEntity>() {
+            @Override
+            public void onChanged(UserEntity userEntity) {
+                if(userEntity == null || !userEntity.getAuthUID().equals(mCurrentUser.getUid())){
+                    mViewModel.newUser();
+                }
+            }
+        });
 
         mRecyclerView = view.findViewById(R.id.recycler_report1);
-        mViewModel = new ViewModelProvider(this).get(UserHomeViewModel.class);
 
         mViewModel.getIsAdmin().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override

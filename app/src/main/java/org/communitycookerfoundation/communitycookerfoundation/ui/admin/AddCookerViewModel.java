@@ -4,18 +4,13 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
-import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class AddCookerViewModel extends AndroidViewModel {
@@ -26,7 +21,7 @@ public class AddCookerViewModel extends AndroidViewModel {
     public AddCookerViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mRepo = new DataRepo(application, mCurrentUser);
+        mRepo = new DataRepo(application);
     }
 
 

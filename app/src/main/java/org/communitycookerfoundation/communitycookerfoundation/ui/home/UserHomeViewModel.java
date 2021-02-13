@@ -11,10 +11,10 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
-import com.google.firebase.firestore.DocumentReference;
 
 import org.communitycookerfoundation.communitycookerfoundation.db.DataRepo;
 import org.communitycookerfoundation.communitycookerfoundation.db.Entity.ReportEntity;
+import org.communitycookerfoundation.communitycookerfoundation.db.Entity.UserEntity;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class UserHomeViewModel extends AndroidViewModel {
     public UserHomeViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mRepo = new DataRepo(application, mCurrentUser);
+        mRepo = new DataRepo(application);
         mAllReports = mRepo.getAllReports();
         mIsAdmin.setValue(Boolean.FALSE);
         mIsAuthdUser.setValue(Boolean.FALSE);
@@ -84,6 +84,7 @@ public class UserHomeViewModel extends AndroidViewModel {
     }
 
     public String getDisplayName() {
+
         return mCurrentUser.getDisplayName();
     }
 
@@ -96,5 +97,13 @@ public class UserHomeViewModel extends AndroidViewModel {
     public LiveData<Boolean> getIsAuthdUser() {
         
         return mIsAuthdUser; 
+    }
+
+    public void newUser() {
+        mRepo.newUser();
+    }
+
+    public LiveData<UserEntity> getLocalUserInfo() {
+        return mRepo.getLocalUserInfo();
     }
 }

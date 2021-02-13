@@ -14,10 +14,8 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,18 +29,18 @@ import org.communitycookerfoundation.communitycookerfoundation.R;
  * Use the {@link PromptNumFragment#createInstance} factory method to
  * create an instance of this fragment.
  */
-public class PromptCondFragment extends Fragment {
+public class PromptTextFieldFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String QUESTION = "question";
-    private static final String IF_FALSE = "if_false";
-    private static final String IF_TRUE = "if_true";
-   // private static final String HINT = "hint";
+    private static final String MAX_VAL = "max_val";
+    private static final String MIN_VAL = "min_val";
+    private static final String HINT = "hint";
     private static final String CUR_POS = "cur_pos";
     private static final String PREV_POS = "prev_pos";
     private static final String SIZE = "size";
-    private OnPromptCondBtnClicked mBtnClicked;
+    private OnPromptBtnClicked mBtnClicked;
     public static final int BACK_CLICKED = 0 ;
     public static final int NEXT_CLICKED = 1;
     // TODO: Rename and change types of parameters
@@ -65,17 +63,14 @@ public class PromptCondFragment extends Fragment {
     private Button mNextBtn;
     private Button mCancelBtn;
     private int mPromptSize;
-    private Spinner mSpinner;
-    private int mIfFalse;
-    private int mIfTrue;
     private int mPrevPos;
 
+    public PromptTextFieldFragment() {
 
 
 
-    public PromptCondFragment() {
 
-
+        // Required empty public constructor
     }
 
     /**
@@ -83,19 +78,21 @@ public class PromptCondFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param question Parameter 1.
+     * @param hint Parameter 2.
      * @return A new instance of fragment PromptTextFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PromptCondFragment createInstance(String question, int if_false, int if_true, int  position, OnPromptCondBtnClicked nextClicked, int isLast, int prev) {
-        PromptCondFragment fragment = new PromptCondFragment();
+    public static PromptNumFragment createInstance(String question, String hint, int max_value, int min_value, int  position, OnPromptBtnClicked nextClicked, int isLast, int prev) {
+        PromptNumFragment fragment = new PromptNumFragment();
         Bundle args = new Bundle();
         args.putString(QUESTION, question);
-      //  args.putString(HINT, hint);
-        args.putInt(IF_FALSE, if_false);
-        args.putInt(IF_TRUE, if_true);
+        args.putString(HINT, hint);
+        args.putInt(MAX_VAL, max_value);
+        args.putInt(MIN_VAL, min_value);
         args.putInt(CUR_POS, position);
         args.putInt(SIZE, isLast);
         args.putInt(PREV_POS, prev);
+
 
         fragment.setArguments(args);
         return fragment;
@@ -104,13 +101,12 @@ public class PromptCondFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mBtnClicked = (OnPromptCondBtnClicked) this.getParentFragment();
-
+        mBtnClicked = (OnPromptBtnClicked) getParentFragment();
         if (getArguments() != null) {
             mQuestionText = getArguments().getString(QUESTION);
-            //mHint = getArguments().getString(HINT);
-            mIfFalse = getArguments().getInt(IF_FALSE);
-            mIfTrue = getArguments().getInt(IF_TRUE);
+            mHint = getArguments().getString(HINT);
+            mMaxValue = getArguments().getInt(MAX_VAL);
+            mMinValue = getArguments().getInt(MIN_VAL);
             mCurPos = getArguments().getInt(CUR_POS);
             mPromptSize = getArguments().getInt(SIZE);
             mPrevPos = getArguments().getInt(PREV_POS);
@@ -122,31 +118,24 @@ public class PromptCondFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_prompt_cond, container, false);
+        return inflater.inflate(R.layout.fragment_prompt_text_field, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mSpinner = view.findViewById(R.id.choice_spinner);
-// Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this.getContext(),
-                R.array.bool_cond, android.R.layout.simple_spinner_item);
-// Specify the layout to use when the list of choices appears
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-// Apply the adapter to the spinner
-        mSpinner.setAdapter(adapter);
-
-
-        mQuestionView = view.findViewById(R.id.textPromptCond);
+        mQuestionView = view.findViewById(R.id.calPromptText);
+        mEditText = view.findViewById(R.id.input_answer);
+//        mEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+        mEditText.setHint(mHint);
         String questionPrompt = (/*mCurPos + ") " +*/mQuestionText);
         mQuestionView.setText(questionPrompt);
-        TextView currentNum = view.findViewById(R.id.currentPromptCond);
-        mCurPos +=1;
-
+        mInputEditLayout = view.findViewById(R.id.prompt_Layout);
+        TextView currentNum = view.findViewById(R.id.currentPromptNum1);
+        mCurPos+=1;
         currentNum.setText(""+mCurPos);
         setProgressBar();
-     /*   mEditText.addTextChangedListener(new TextWatcher() {
+        mEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -157,7 +146,7 @@ public class PromptCondFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = mEditText.getText().toString().trim();
-                validateText(text);
+                //   validateText(text);
                 //TODO: Update cache of responses after text changes
                 //TODO: sort out persistence
 
@@ -169,7 +158,7 @@ public class PromptCondFragment extends Fragment {
 
 
             }
-        });*/
+        });
 
 
         mNextBtn = view.findViewById(R.id.next_btn);
@@ -181,18 +170,18 @@ public class PromptCondFragment extends Fragment {
         mNextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String strChoice;
-                boolean boolChoice = false;
-                strChoice = (String) mSpinner.getSelectedItem();
-                if(strChoice !=null){
-                    boolChoice = strChoice.contains("Yes");
+                if(!TextUtils.isEmpty(mEditText.getText().toString())){
+                    if(validateText(mEditText.getText().toString())) {
+
+                        mBtnClicked.onNextClick(mEditText.getText().toString());
+
+                    }
+                }
+                else {
+                    Toast myToast = Toast.makeText(getContext(), R.string.toast_empty_string, Toast.LENGTH_SHORT);
+                    myToast.show();
 
                 }
-                if(boolChoice){
-                    mBtnClicked.onNextClick((String) mSpinner.getSelectedItem(), mIfTrue);
-                    return;
-                }
-                mBtnClicked.onNextClick((String) mSpinner.getSelectedItem(), mIfFalse);
 
             }
         });
@@ -211,48 +200,27 @@ public class PromptCondFragment extends Fragment {
     }
 
     private void setProgressBar() {
-        ProgressBar propmtProgBar = getView().findViewById(R.id.promptCondProgBar);
-        int percentage = (mCurPos+1/mPromptSize) * 100;
+        ProgressBar propmtProgBar = getView().findViewById(R.id.promptNumProgBar);
+        int percentage = Math.round((/*mCurPos+1*/2/mPromptSize) * 100);
         propmtProgBar.setProgress(percentage);
 
     }
 
 
-/*
 
     private boolean validateText(String inputString) {
 
-        if (!inputString.isEmpty()) {
-            if (Integer.parseInt(inputString) > mMaxValue) {
-                mInputEditLayout.setErrorEnabled(true);
-                mInputEditLayout.setError("Please add an amount less than " + mMaxValue);
-                return false;
-            }
-
-            else if (Integer.parseInt(inputString) < mMinValue) {
-                mInputEditLayout.setErrorEnabled(true);
-                mInputEditLayout.setError("Please add an amount greater than " + mMinValue);
-                return false;
-            }
-
-            else {
-                mInputEditLayout.setErrorEnabled(false);
-                return true;
-            }
-        }
-        else {
+        if (inputString.isEmpty()) {
             Toast myToast = Toast.makeText(getContext(), R.string.toast_empty_string, Toast.LENGTH_SHORT);
             myToast.show();
             return false;
 
         }
     }
-*/
 
-    public  interface OnPromptCondBtnClicked {
-        void onNextClick( String response ,int destination);
+    public  interface OnPromptBtnClicked {
+        void onNextClick( String response);
         void onBackClick();
-
     }
 
 }

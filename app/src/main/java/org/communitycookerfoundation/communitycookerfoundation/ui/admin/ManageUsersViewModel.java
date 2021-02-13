@@ -27,7 +27,7 @@ public class ManageUsersViewModel extends AndroidViewModel {
     public ManageUsersViewModel(@NonNull Application application) {
         super(application);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
-        mRepo = new DataRepo(application, mCurrentUser);
+        mRepo = new DataRepo(application);
         mAllReports = mRepo.getAllReports();
         mAllUsers = mRepo.getAllUsers();
     }
